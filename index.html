@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+</head>
+
+<body style="margin:0; padding:0; font-family:Arial, sans-serif; background:#e9f2fa; font-size:12px;">
+
+    <div style="width:900px; margin:40px auto; background:#ffffff; border:2px solid #0A2A43; padding:0;">
+
+        <!-- HEADER -->
+        <div
+            style="padding:16px 20px; border-bottom:2px solid #0A2A43; display:flex; justify-content:space-between; align-items:center; background:#f3f8ff;">
+
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ89jfe3MmWetJZIqRnbvVE0qFIyEN0B9jL0w&s"
+                alt="Logo" style="height:45px;">
+
+            <div id="dynamicDate" style="font-size:12px; font-weight:bold; color:#0A2A43;">
+                DATE:
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const dateElement = document.getElementById("dynamicDate");
+                const now = new Date();
+                const formatted =
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "/" +
+                    ("0" + now.getDate()).slice(-2) + "/" +
+                    now.getFullYear();
+                dateElement.textContent = "DATE: " + formatted;
+            })();
+        </script>
+
+
+        <!-- TWO COLUMN LAYOUT -->
+        <div style="display:flex;">
+
+            <!-- LEFT COLUMN - FORM -->
+            <div style="width:50%; padding:20px; border-right:2px solid #0A2A43; background:#ffffff;">
+
+                <form
+                    action="https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00DVA000007Hanq"
+                    method="POST" style="margin:0;">
+
+                    <input type="hidden" name="orgid" value="00DVA000007Hanq">
+                    <input type="hidden" name="retURL" value="http://gmail.com">
+
+                    <!-- HIDDEN FIELDS (default values can be filled later) -->
+                    <input type="hidden" id="recordType" name="recordType"
+                        placeholder="Enter default Record Type ID here" value="Sales">
+                    <input type="hidden" id="type" name="type" placeholder="Enter Type default later" value="Sales">
+                    <input type="hidden" id="00NVA0000095wfh" name="00NVA0000095wfh"
+                        placeholder="Subtype default later" value="Information" >
+                    <input type="hidden" id="00NVA0000095x8j" name="00NVA0000095x8j"
+                        placeholder="Subcategory default later" value="Core Card Form" >
+
+                    <!-- ROW TEMPLATE: label + input in same line -->
+
+                    <div style="display:flex; align-items:center; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                            PLEASE ENTER THE SALES ORDER: <span style="color:red;">*</span>
+                        </span>
+                        <input name="subject" id="subject" type="text" maxlength="80"
+                            style="width:55%; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;">
+                    </div>
+
+                    <div style="display:flex; align-items:center; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                            COMPANY NAME: <span style="color:red;">*</span>
+                        </span>
+                        <input id="company" name="company" type="text" maxlength="80"
+                            style="width:55%; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;">
+                    </div>
+
+                    <div style="display:flex; align-items:center; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                            PART NUMBER: <span style="color:red;">*</span>
+                        </span>
+                        <input id="00NVA0000095LtD" name="00NVA0000095LtD" type="text"
+                            style="width:55%; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;">
+                    </div>
+
+
+
+                    <!-- TSN & TSO -->
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; gap:25px;">
+
+                        <!-- TSN -->
+                        <div style="flex:1; display:flex; align-items:center;">
+                            <span style="width:35%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                                TSN: <span style="color:red;">*</span>
+                            </span>
+                            <input id="00NVA0000095LtK" name="00NVA0000095LtK" type="text" style="flex:1; padding:6px; border:1px solid #9db9d5; border-radius:3px;
+                    background:#f7fbff; font-size:11px; min-width:130px;">
+                        </div>
+
+                        <!-- TSO -->
+                        <div style="flex:1; display:flex; align-items:center;">
+                            <span style="width:35%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                                TSO: <span style="color:red;">*</span>
+                            </span>
+                            <input id="00NVA0000095LtL" name="00NVA0000095LtL" type="text" style="flex:1; padding:6px; border:1px solid #9db9d5; border-radius:3px;
+                    background:#f7fbff; font-size:11px; min-width:130px;">
+                        </div>
+
+                    </div>
+
+
+                    <!-- CSN & CSO -->
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; gap:25px;">
+
+                        <!-- CSN -->
+                        <div style="flex:1; display:flex; align-items:center;">
+                            <span style="width:35%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                                CSN: <span style="color:red;">*</span>
+                            </span>
+                            <input id="00NVA0000095Lt8" name="00NVA0000095Lt8" type="text" style="flex:1; padding:6px; border:1px solid #9db9d5; border-radius:3px;
+                    background:#f7fbff; font-size:11px; min-width:130px;">
+                        </div>
+
+                        <!-- CSO -->
+                        <div style="flex:1; display:flex; align-items:center;">
+                            <span style="width:35%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                                CSO: <span style="color:red;">*</span>
+                            </span>
+                            <input id="00NVA0000095Lt9" name="00NVA0000095Lt9" type="text" style="flex:1; padding:6px; border:1px solid #9db9d5; border-radius:3px;
+                    background:#f7fbff; font-size:11px; min-width:130px;">
+                        </div>
+
+                    </div>
+
+
+
+                    <div style="display:flex; align-items:center; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                            AIRCRAFT TYPE: <span style="color:red;">*</span>
+                        </span>
+                        <input id="00NVA0000095Lt7" name="00NVA0000095Lt7" type="text"
+                            style="width:55%; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;">
+                    </div>
+
+                    <div style="display:flex; align-items:center; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                            AIRCRAFT SERIAL #: <span style="color:red;">*</span>
+                        </span>
+                        <input id="00NVA0000095Lt5" name="00NVA0000095Lt5" type="text"
+                            style="width:55%; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;">
+                    </div>
+
+                    <div style="display:flex; align-items:center; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                            AIRCRAFT TAIL #: <span style="color:red;">*</span>
+                        </span>
+                        <input id="00NVA0000095Lt6" name="00NVA0000095Lt6" type="text"
+                            style="width:55%; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;">
+                    </div>
+
+                    <div style="display:flex; align-items:flex-start; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; padding-top:4px; font-size:9.5px;">
+                            REASON FOR REMOVAL: <span style="color:red;">*</span>
+                        </span>
+                    </div>
+                    <textarea id="00NVA0000095LtG" name="00NVA0000095LtG"
+                        style="width:90%; height:70px; resize: none; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;"></textarea>
+
+                    <div style="margin-top:10px; margin-bottom:10px;">
+                        <label style="font-size:11px; color:#0A2A43;">
+                            <span style="color:red;">*</span>
+                            <input type="checkbox" style="margin:0 6px 0 4px;">
+                            I HEREBY STATE THAT THIS PART WAS REMOVED FROM THE AIRCRAFT IDENTIFIED ABOVE AND HAS NOT
+                            BEEN SUBJECTED TO ANY MAJOR ENGINE FAILURE, ACCIDENT OR FIRE.
+                        </label>
+                    </div>
+                    <div style="display:flex; align-items:center; margin-bottom:8px;">
+                        <span style="width:45%; font-weight:bold; color:#0A2A43; font-size:9.5px;">
+                            SIGNATURE: <span style="color:red;">*</span>
+                        </span>
+                        <input id="00NVA0000095LtJ" name="00NVA0000095LtJ" type="text"
+                            style="width:55%; padding:6px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; font-size:11px;">
+                    </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN - LETTER -->
+            <div style="width:50%; padding:20px; background:#f3f8ff; font-size:12px; position:relative;">
+
+                <h3 style="margin-top:0; color:#0A2A43; font-size:13px;">Dear Customer:</h3>
+
+                <p style="font-size:12px; line-height:1.5; color:#0A2A43;">
+                    Thank you for purchasing a quality exchange product from CRS Jet Spares. We appreciate
+                    your business and the trust you place in us allowing us to serve you. Please complete the
+                    form on the back and include it with your core.
+                </p>
+
+                <p style="font-size:12px; line-height:1.5; color:#0A2A43;">
+                    Any documentation you can include with your return core will assist the incoming
+                    inspection process of confirming traceability and applying core credit.
+                </p>
+
+                <p style="font-size:12px; line-height:1.5; color:#0A2A43;">
+                    Again, thank you for your business.
+                </p>
+
+                <!-- BOTTOM LEFT LOGO -->
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ89jfe3MmWetJZIqRnbvVE0qFIyEN0B9jL0w&s"
+                    alt="CRS Logo" style="position:absolute; bottom:10px; left:10px; height:55px;">
+
+                <!-- BOTTOM RIGHT ADDRESS -->
+                <div
+                    style="position:absolute; bottom:10px; right:10px; text-align:right; color:#0A2A43; font-size:9.5px; line-height:1.3; max-width:180px;">
+                    <strong style="font-size:11px;">CRS JET SPARES</strong><br>
+                    6701 N.W. 12th Avenue<br>
+                    Ft. Lauderdale, FL 33309<br>
+                    Tel: 954-972-2807<br>
+                    Fax: 954-972-2708<br>
+                    <a href="http://www.crsjetspares.com"
+                        style="color:#0A2A43; text-decoration:none; font-weight:bold;">
+                        www.crsjetspares.com
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER SUBMIT BUTTON -->
+        <div style="background:#0A2A43; padding:14px; text-align:center;">
+            <input type="submit" value="SUBMIT CERTIFICATE"
+                style="background:none; border:none; color:white; font-size:13px; letter-spacing:1px; cursor:pointer;">
+        </div>
+
+        </form>
+
+    </div>
+
+    <script>
+        // Prefix Subject Before Submit
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const subjectField = document.getElementById("subject");
+
+            form.addEventListener("submit", function (e) {
+                const value = subjectField.value.trim();
+
+                if (!value) {
+                    alert("Please enter the Sales Order (Subject).");
+                    e.preventDefault();
+                    return;
+                }
+
+                if (!value.startsWith("Support related to ")) {
+                    subjectField.value = "Support related to " + value;
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
