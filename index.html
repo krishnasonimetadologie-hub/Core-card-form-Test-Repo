@@ -3,24 +3,88 @@
 
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+
+    <style>
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 14px;
+            width: 100%;
+        }
+
+        .row label {
+            white-space: nowrap;
+            margin-right: 12px;
+            font-weight: bold;
+            color: #0A2A43;
+            font-size: 14px;
+        }
+
+        .row input {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #0A2A43;
+            padding: 6px 4px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+
+        .pair {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 14px;
+            width: 100%;
+        }
+
+        .pair .row {
+            margin-bottom: 0 !important;
+        }
+
+        textarea {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid #0A2A43;
+            padding: 6px 4px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+            resize: none;
+        }
+    </style>
+
 </head>
 
-<body style="margin:0; padding:0; font-family:Arial, sans-serif; background:#e9f2fa; font-size:12px;">
+<body style="margin:0; padding:0; font-family:Arial, sans-serif; background:#fcfcef; font-size:12px;">
 
-    <div style="width:700px; margin:40px auto; background:#ffffff; border:2px solid #0A2A43; padding:0; border-radius:4px;">
+    <div style="width:700px; margin:40px auto; background:#fcfcef; padding:0; border-radius:4px;">
 
-        <!-- HEADER -->
-        <div style="padding:16px 20px; border-bottom:2px solid #0A2A43; display:flex; justify-content:space-between; align-items:center; background:#f3f8ff;">
-            <img src="https://i.ibb.co/ZpQnHQLd/image.png" alt="Logo" style="height:45px;">
-            <h1>Parts. Problems. Solved<br/>
-We offer More than just Parts. We offer Solutions.</h1>
+       <!-- HEADER -->
+        <div style="padding:30px 20px; padding-bottom:12px; text-align:center; background:#fcfcef;">
+            
+            <!-- Logo -->
+            <img src="https://i.ibb.co/ZpQnHQLd/image.png" 
+                alt="Logo" 
+                style="height:110px; margin-bottom:0px;">
+
+            <!-- Taglines -->
+            <div style="color:#0A2A43; ">
+                <div style="font-size:20px; font-weight:700;">
+                    Parts. Problems. Solved
+                </div>
+
+                <div style="font-size:20px; font-weight:700; margin-top:5px;">
+                    We offer More than just Parts. We offer Solutions.
+                </div>
+            </div>
+
+            <h1 style="font-size: 35px;" >Core Card</h1>
         </div>
 
-        <div>
-            <h1>Core Card</h1>
-        </div>
-        <!-- SINGLE COLUMN FORM -->
-        <div style="padding:25px;">
+
+
+        <!-- FORM STARTS HERE-->
+        <div style="padding:25px; padding-top:0px;">
 
             <form
                 action="https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00DVA000007Hanq"
@@ -35,131 +99,99 @@ We offer More than just Parts. We offer Solutions.</h1>
                 <input type="hidden" id="00NVA0000095wfh" name="00NVA0000095wfh" value="Information">
                 <input type="hidden" id="00NVA0000095x8j" name="00NVA0000095x8j" value="Core Card Form">
 
-                <!-- ===== FORM FIELDS ===== -->
 
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">
-                        Sales Order Number: <span style="color:red">*</span>
-                    </label>
-                    <input name="subject" id="subject" type="text" maxlength="80"
-                        style="width:100%; padding:7px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; margin-top:4px;">
+
+                <!-- ===== FORM FIELDS (Unified Design) ===== -->
+
+                <div class="row">
+                    <label>Sales Order Number: <span style="color:red">*</span></label>
+                    <input name="subject" id="subject" type="text" maxlength="80">
                 </div>
 
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">Customer Name: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095LtJ" name="00NVA0000095LtJ" type="text"
-                        style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                <div class="row">
+                    <label>Customer Name: <span style="color:red">*</span></label>
+                    <input id="00NVA0000095LtJ" name="00NVA0000095LtJ" type="text">
                 </div>
 
-                
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">
-                        Company Name: <span style="color:red">*</span>
-                    </label>
-                    <input name="company" id="company" type="text"
-                        style="width:100%; padding:7px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; margin-top:4px;">
+                <div class="row">
+                    <label>Company Name: <span style="color:red">*</span></label>
+                    <input name="company" id="company" type="text">
                 </div>
 
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">
-                        Part Number: <span style="color:red">*</span>
-                    </label>
-                    <input name="00NVA0000095LtD" id="00NVA0000095LtD" type="text"
-                        style="width:100%; padding:7px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff; margin-top:4px;">
+                <div class="row">
+                    <label>Part Number: <span style="color:red">*</span></label>
+                    <input name="00NVA0000095LtD" id="00NVA0000095LtD" type="text">
                 </div>
 
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">Serial Number: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095LtI" name="00NVA0000095LtI" type="text"
-                        style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                <div class="row">
+                    <label>Serial Number: <span style="color:red">*</span></label>
+                    <input id="00NVA0000095LtI" name="00NVA0000095LtI" type="text">
                 </div>
 
                 <!-- TSN / CSN -->
-                <div style="display:flex; gap:20px; margin-bottom:12px;">
-                    <div style="flex:1;">
-                        <label style="font-size:10px; font-weight:bold; color:#0A2A43;">TSN: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095LtK" name="00NVA0000095LtK" type="text"
-                            style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                <div class="pair">
+                    <div class="row">
+                        <label>TSN: <span style="color:red">*</span></label>
+                        <input id="00NVA0000095LtK" name="00NVA0000095LtK" type="text">
                     </div>
 
-                    <div style="flex:1;">
-                        <label style="font-size:10px; font-weight:bold; color:#0A2A43;">CSN: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095Lt8" name="00NVA0000095Lt8" type="text"
-                            style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                    <div class="row">
+                        <label>CSN: <span style="color:red">*</span></label>
+                        <input id="00NVA0000095Lt8" name="00NVA0000095Lt8" type="text">
                     </div>
-                    
                 </div>
 
                 <!-- TSO / CSO -->
-                <div style="display:flex; gap:20px; margin-bottom:12px;">
-                    <div style="flex:1;">
-                        <label style="font-size:10px; font-weight:bold; color:#0A2A43;">TSO: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095LtL" name="00NVA0000095LtL" type="text"
-                            style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                <div class="pair">
+                    <div class="row">
+                        <label>TSO: <span style="color:red">*</span></label>
+                        <input id="00NVA0000095LtL" name="00NVA0000095LtL" type="text">
                     </div>
 
-                    <div style="flex:1;">
-                        <label style="font-size:10px; font-weight:bold; color:#0A2A43;">CSO: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095Lt9" name="00NVA0000095Lt9" type="text"
-                            style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                    <div class="row">
+                        <label>CSO: <span style="color:red">*</span></label>
+                        <input id="00NVA0000095Lt9" name="00NVA0000095Lt9" type="text">
                     </div>
                 </div>
 
-                <!-- More fields -->
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">Aircraft Type: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095Lt7" name="00NVA0000095Lt7" type="text"
-                        style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                <div class="row">
+                    <label>Aircraft Type: <span style="color:red">*</span></label>
+                    <input id="00NVA0000095Lt7" name="00NVA0000095Lt7" type="text">
                 </div>
 
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">Aircraft Serial Number: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095Lt5" name="00NVA0000095Lt5" type="text"
-                        style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                <div class="row">
+                    <label>Aircraft Serial Number: <span style="color:red">*</span></label>
+                    <input id="00NVA0000095Lt5" name="00NVA0000095Lt5" type="text">
                 </div>
 
-                <div style="margin-bottom:12px;">
-                    <label style="font-size:10px; font-weight:bold; color:#0A2A43;">Aircraft Tail Number: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095Lt6" name="00NVA0000095Lt6" type="text"
-                        style="width:100%; padding:7px; margin-top:4px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;">
+                <div class="row">
+                    <label>Aircraft Tail Number: <span style="color:red">*</span></label>
+                    <input id="00NVA0000095Lt6" name="00NVA0000095Lt6" type="text">
                 </div>
 
-                
+                <div class="row" style="align-items:flex-start;">
+                    <label style="margin-top:6px;">Reason For Removal: <span style="color:red">*</span></label>
+                    <textarea id="00NVA0000095LtG" name="00NVA0000095LtG" rows="3"></textarea>
+                </div>
 
 
-                <label style="font-size:10px; font-weight:bold; color:#0A2A43;">Reaon For Removal: <span style="color:red">*</span></label>
-                <textarea id="00NVA0000095LtG" name="00NVA0000095LtG"
-                    style="width:100%; height:70px; resize:none; margin-top:4px; padding:7px; border:1px solid #9db9d5; border-radius:3px; background:#f7fbff;"></textarea>
 
-                <br><br>
 
                 <!-- CHECKBOXES -->
-
                 <div style="margin:10px 0;">
-                    <label style="font-size:10px; color:#0A2A43;">
-                        <span style="color:red">*</span>
-                        <input type="checkbox" style="margin:0 6px 0 4px; width:12px" required>
-                        I HEREBY ACKNOWLEDGE ALL THE 
-                        <a style="color:#0A2A43;" href="https://crsjetspares.com/general-terms-and-conditions-for-sale-and-exchange-of-goods/">
-                            TERMS AND CONDITIONS.
-                        </a>
+                    <label style="font-size:12px; color:#0A2A43;">
+                        I hereby state this part was removed from the aircraft identified above and has not been subjected to any major engine failure, accident, or fire. I further affirm all information
+to be true and correct. By submitting the digital core card form, you are agreeing to the <a style="color:#0A2A43;" href="https://crsjetspares.com/general-terms-and-conditions-for-sale-and-exchange-of-goods/">
+                            Terms and Conditions
+                        </a> listed on the CRS Jet Spares invoice and website.
                     </label>
                 </div>
 
-                <div style="margin:10px 0;">
-                    <label style="font-size:10px; color:#0A2A43;">
-                        <span style="color:red">*</span>
-                        <input type="checkbox" style="margin:0 6px 0 4px; width:12px" required>
-                        I ACKNOWLEDGE THAT THE INFORMATION PROVIDED IS ACCURATE.
-                    </label>
-                </div>
 
                 <!-- SUBMIT BUTTON -->
-                <div style="text-align:center; padding:16px; background:#0A2A43; margin-top:20px;">
-                    <input type="submit" value="SUBMIT"
-                        style="background:none; border:none; color:white; font-size:13px; letter-spacing:1px; cursor:pointer;">
+                <div style="text-align:center;padding: 0;height: 42px;background:#ffec00;margin-top:20px;">
+                    <input type="submit" value="SUBMIT" style="background:none;width:100%;height: 104%; border:none; color:black;font-size:13px;letter-spacing:1px;cursor:pointer;">
                 </div>
-
             </form>
 
         </div>
