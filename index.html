@@ -199,81 +199,81 @@
                 method="POST" style="margin:0;" novalidate>
 
                 <!-- HIDDEN FIELDS (kept intact) -->
-                <input type="hidden" name="orgid" value="00DVA000007Hanq">
-                <input type="hidden" name="retURL" value="http://gmail.com">
-                <input type="hidden" id="recordType" name="recordType" value="Sales">
-                <input type="hidden" id="type" name="type" value="Sales">
-                <input type="hidden" id="00NVA0000095wfh" name="00NVA0000095wfh" value="Information">
-                <input type="hidden" id="00NVA0000095x8j" name="00NVA0000095x8j" value="Core Card Form">
+                <input type="hidden" name="orgid" value="00DVA000007Hanq"> <!-- This is Org ID -->
+                <input type="hidden" name="retURL" value="http://gmail.com"> <!-- This is Redirect Url. -->
+                <input type="hidden" id="recordType" name="recordType" value="Sales"> <!-- This is RecordType -->
+                <input type="hidden" id="type" name="type" value="Sales"> <!-- This is Type field -->
+                <input type="hidden" id="00NVA0000095wfh" name="00NVA0000095wfh" value="Information"> <!-- This is Sub_Type__c -->
+                <input type="hidden" id="00NVA0000095x8j" name="00NVA0000095x8j" value="Core Card Form"> <!-- This is Category__c -->
 
                 <!-- FORM FIELDS -->
                 <div class="row">
-                    <label for="subject">Sales Order Number: <span style="color:red">*</span></label>
-                    <input name="subject" id="subject" type="text" maxlength="80">
+                    <label for="subject">Sales Order Number: <span style="color:red">*</span></label> 
+                    <input name="subject" id="subject" type="text" maxlength="80"> <!-- This is Subject -->
                 </div>
 
                 <div class="row">
                     <label for="00NVA00000AeR8b">Customer Name: <span style="color:red">*</span></label>
-                    <input id="00NVA00000AeR8b" name="00NVA00000AeR8b" type="text">
+                    <input id="00NVA00000AeR8b" name="00NVA00000AeR8b" type="text"> <!-- This is Customer_Name__c -->
                 </div>
 
                 <div class="row">
                     <label for="company">Company Name: <span style="color:red">*</span></label>
-                    <input name="company" id="company" type="text">
+                    <input name="company" id="company" type="text"> <!-- This is Company -->
                 </div>
 
                 <div class="row">
                     <label for="00NVA0000095LtD">Part Number: <span style="color:red">*</span></label>
-                    <input name="00NVA0000095LtD" id="00NVA0000095LtD" type="text">
+                    <input name="00NVA0000095LtD" id="00NVA0000095LtD" type="text"> <!-- This is Part_Number__c -->
                 </div>
 
                 <div class="row">
                     <label for="00NVA0000095LtI">Serial Number: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095LtI" name="00NVA0000095LtI" type="text">
+                    <input id="00NVA0000095LtI" name="00NVA0000095LtI" type="text"> <!-- This is Serial_Number__c -->
                 </div>
 
                 <!-- TSN/TSO/CSN/CSO block (same input style applied) -->
                 <div class="pairs-grid">
                     <div class="field">
                         <label style="font-weight: 600;" for="00NVA0000095LtK">TSN: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095LtK" name="00NVA0000095LtK" type="text">
+                        <input id="00NVA0000095LtK" name="00NVA0000095LtK" type="text"> <!-- This is TSN__c -->
                     </div>
 
                     <div class="field">
                         <label style="font-weight: 600;" for="00NVA0000095LtL">TSO: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095LtL" name="00NVA0000095LtL" type="text">
+                        <input id="00NVA0000095LtL" name="00NVA0000095LtL" type="text"> <!-- This is TSO__c -->
                     </div>
 
                     <div class="field">
                         <label style="font-weight: 600;" for="00NVA0000095Lt8">CSN: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095Lt8" name="00NVA0000095Lt8" type="text">
+                        <input id="00NVA0000095Lt8" name="00NVA0000095Lt8" type="text"> <!-- This is CSN__c -->
                     </div>
 
                     <div class="field">
                         <label style="font-weight: 600;" for="00NVA0000095Lt9">CSO: <span style="color:red">*</span></label>
-                        <input id="00NVA0000095Lt9" name="00NVA0000095Lt9" type="text">
+                        <input id="00NVA0000095Lt9" name="00NVA0000095Lt9" type="text"> <!-- This is CSO__c -->
                     </div>
                 </div>
                 <!-- end pairs-grid -->
 
                 <div class="row">
                     <label for="00NVA0000095Lt7">Aircraft Type: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095Lt7" name="00NVA0000095Lt7" type="text">
+                    <input id="00NVA0000095Lt7" name="00NVA0000095Lt7" type="text"> <!-- This is Aircraft_Type__c -->
                 </div>
 
                 <div class="row">
                     <label for="00NVA0000095Lt5">Aircraft Serial Number: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095Lt5" name="00NVA0000095Lt5" type="text">
+                    <input id="00NVA0000095Lt5" name="00NVA0000095Lt5" type="text"> <!-- This is Aircraft_Serial__c -->
                 </div>
 
                 <div class="row">
                     <label for="00NVA0000095Lt6">Aircraft Tail Number: <span style="color:red">*</span></label>
-                    <input id="00NVA0000095Lt6" name="00NVA0000095Lt6" type="text">
+                    <input id="00NVA0000095Lt6" name="00NVA0000095Lt6" type="text"> <!-- This is Aircraft_Tail__c -->
                 </div>
 
                 <div class="row" style="align-items:flex-start;">
                     <label for="00NVA0000095LtG" style="margin-top:6px;">Reason For Removal: <span style="color:red">*</span></label>
-                    <textarea id="00NVA0000095LtG" name="00NVA0000095LtG" rows="3"></textarea>
+                    <textarea id="00NVA0000095LtG" name="00NVA0000095LtG" rows="3"></textarea> <!-- This is Reason_For_Removal__c -->
                 </div>
 
                 <!-- Terms text (checkboxes removed as requested) -->
