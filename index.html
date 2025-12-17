@@ -1,327 +1,301 @@
 <!-- MT-7455 -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Core Card</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Core Card</title>
 
-    <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        color: #0a2a43;
-        font-size: 14px;
-        position: relative;
-        z-index: 0;
-      }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #0a2a43;
+      font-size: 12.5px;
+      position: relative;
+      z-index: 0;
+    }
 
-      /* Background – sharp, no width scaling */
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
+    /* Background */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("https://i.ibb.co/hJfMMh17/image-2.png");
+      opacity: 0.25;
+      background-repeat: no-repeat;
+      background-position: top center;
+      background-size: 100% 100%;
+      z-index: -1;
+    }
 
-        background-image: url("https://i.ibb.co/hJfMMh17/image-2.png");
-        opacity: 0.25;
-        background-repeat: no-repeat;
-        background-position: top center;
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 22px 14px 10px;
+    }
 
-        /* KEY LINE: lock width, crop height */
-        background-size: 100% 100%;
+    .header img {
+      height: 62px;
+      width: 180px;
+      margin-bottom: 5px;
+    }
 
-        z-index: -1;
-      }
+    .header .tag {
+      font-size: 16px;
+      font-weight: 600;
+    }
 
-      /* Card */
+    .header .tag div {
+      font-size: 13px;
+      font-style: italic;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* Card */
+    .page {
+      max-width: 660px;
+      margin: 6px auto 24px;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .title {
+      margin-top: 14px;
+      font-size: 23px;
+      text-align: center;
+      font-weight: 600;
+      color: #2f5fa7;
+    }
+
+    /* Form */
+    .form-wrap {
+      padding: 18px 26px 26px;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+    }
+
+    .row label {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 3px;
+      color: #333;
+    }
+
+    .row input,
+    .row textarea,
+    .pairs-grid input {
+      width: 100%;
+      border: none;
+      background: #f0f4f9;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+
+    .row textarea {
+      min-height: 64px;
+      resize: vertical;
+    }
+
+    /* Two-column grid */
+    .pairs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .pairs-grid .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pairs-grid label {
+      font-size: 12.5px;
+      font-weight: 500;
+      margin-bottom: 3px;
+      color: #333;
+    }
+
+    /* Terms */
+    .terms {
+      font-size: 12px;
+      color: #333;
+      line-height: 1.35;
+      margin-top: 8px;
+    }
+
+    .terms a {
+      color: #0a2a43;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    /* Submit */
+    .submit-wrap {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .submit-btn {
+      background: #2f5fa7;
+      color: #ffffff;
+      padding: 7px 30px;
+      border-radius: 4px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
       .page {
-        max-width: 860px;
-        margin: 10px auto 40px auto;
-        background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
+        margin: 14px 10px;
       }
 
-      /* Header */
-      .header {
-        text-align: center;
-        padding: 36px 20px 16px;
-      }
-
-      .header img {
-        height: 90px;
-        width: 250px;
-        margin-bottom: 7px;
-      }
-
-      .header .tag {
-        font-size: 22px;
-        font-weight: 600;
-        color: #0a2a43;
-      }
-
-      .header .tag div {
-        font-size: 17px;
-        font-style: italic;
-        font-weight: 500;
-        margin-top: 8px;
-      }
-
-      .title {
-        margin-top: 22px;
-        font-size: 33px;
-        text-align: center;
-        font-weight: 600;
-        color: #2f5fa7;
-      }
-
-      /* Form */
       .form-wrap {
-        padding: 30px 40px 40px;
+        padding: 18px;
       }
 
-      .row {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 16px;
-      }
-
-      .row label {
-        font-size: 17px;
-        font-weight: 500;
-        margin-bottom: 6px;
-        color: #333;
-      }
-
-      .row input,
-      .row textarea,
-      .pairs-grid input {
-        width: 100%;
-        border: none;
-        background: #f0f4f9;
-        border-radius: 6px;
-        padding: 12px 14px;
-        font-size: 14px;
-        outline: none;
-      }
-
-      .row textarea {
-        min-height: 80px;
-        resize: vertical;
-      }
-
-      /* Two-column fields */
       .pairs-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
-        margin-bottom: 16px;
+        grid-template-columns: 1fr;
       }
+    }
+  </style>
+</head>
 
-      .pairs-grid .field {
-        display: flex;
-        flex-direction: column;
-      }
+<body>
 
-      .pairs-grid label {
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 6px;
-        color: #333;
-      }
-
-      /* Terms */
-      .terms {
-        font-size: 15px;
-        color: #333;
-        line-height: 1.4;
-        margin-top: 12px;
-      }
-
-      .terms a {
-        color: #0a2a43;
-        font-weight: 600;
-        text-decoration: underline;
-      }
-
-      /* Submit */
-      .submit-wrap {
-        text-align: center;
-        margin-top: 26px;
-      }
-
-      .submit-btn {
-        background: #2f5fa7;
-        color: #ffffff;
-        padding: 10px 42px;
-        border-radius: 6px;
-        border: none;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      /* Mobile */
-      @media (max-width: 768px) {
-        .page {
-          margin: 20px 12px;
-        }
-        .form-wrap {
-          padding: 24px;
-        }
-        .pairs-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      #light-bg {
-    position: absolute;
-    top: 10px;
-    left: 1320px;
-
-    width: 300px;              /* REQUIRED */
-    height: 300px;             /* REQUIRED */
-
-    background-image: url('https://i.ibb.co/3mG4dNBB/Pngtree-light-effect-glow-6320136.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-
-    pointer-events: none;
-    z-index: 0;
-}
-
-
-    </style>
-  </head>
-
-  <body>
-    <!-- <div id="light-bg" ></div> -->
-    <div class="header">
-      <img src="https://i.ibb.co/ZpQnHQLd/image.png" alt="CRS Jet Spares" />
-      <div class="tag">
-        Parts. Problems. Solved
-        <div>We offer More than just Parts. We offer Solutions.</div>
-      </div>
+  <div class="header">
+    <img src="https://i.ibb.co/ZpQnHQLd/image.png" alt="CRS Jet Spares" />
+    <div class="tag">
+      Parts. Problems. Solved
+      <div>We offer More than just Parts. We offer Solutions.</div>
     </div>
+  </div>
 
-    <div class="page">
-      <div class="title">Core Card</div>
-      <div class="form-wrap">
-        <form
-          action="https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00DVA000007Hanq"
-          method="POST"
-          novalidate
-        >
-          <!-- Hidden Fields -->
-          <input type="hidden" name="orgid" value="00DVA000007Hanq" />
-          <input type="hidden" name="retURL" value="http://gmail.com" />
-          <input type="hidden" name="recordType" value="Sales" />
-          <input type="hidden" name="type" value="Sales" />
-          <input type="hidden" name="00NVA0000095wfh" value="Information" />
-          <input type="hidden" name="00NVA0000095x8j" value="Core Card Form" />
+  <div class="page">
+    <div class="title">Core Card</div>
 
-          <div class="row">
-            <label>Sales Order Number <span style="color: red">*</span></label>
-            <input id="subject" name="subject" type="text" />
+    <div class="form-wrap">
+      <form
+        action="https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00DVA000007Hanq"
+        method="POST"
+        novalidate
+      >
+        <!-- Hidden Fields -->
+        <input type="hidden" name="orgid" value="00DVA000007Hanq" />
+        <input type="hidden" name="retURL" value="http://gmail.com" />
+        <input type="hidden" name="recordType" value="Sales" />
+        <input type="hidden" name="type" value="Sales" />
+        <input type="hidden" name="00NVA0000095wfh" value="Information" />
+        <input type="hidden" name="00NVA0000095x8j" value="Core Card Form" />
+
+        <div class="row">
+          <label>Sales Order Number <span style="color:red">*</span></label>
+          <input id="subject" name="subject" type="text" />
+        </div>
+
+        <div class="row">
+          <label>Customer Name <span style="color:red">*</span></label>
+          <input name="00NVA00000AeR8b" type="text" />
+        </div>
+
+        <div class="row">
+          <label>Company Name <span style="color:red">*</span></label>
+          <input name="company" type="text" />
+        </div>
+
+        <div class="row">
+          <label>Part Number <span style="color:red">*</span></label>
+          <input name="00NVA0000095LtD" type="text" />
+        </div>
+
+        <div class="row">
+          <label>Serial Number <span style="color:red">*</span></label>
+          <input name="00NVA0000095LtI" type="text" />
+        </div>
+
+        <div class="pairs-grid">
+          <div class="field">
+            <label>TSN *</label>
+            <input name="00NVA0000095LtK" type="text" />
           </div>
-
-          <div class="row">
-            <label>Customer Name <span style="color: red">*</span></label>
-            <input name="00NVA00000AeR8b" type="text" />
+          <div class="field">
+            <label>TSO *</label>
+            <input name="00NVA0000095LtL" type="text" />
           </div>
-
-          <div class="row">
-            <label>Company Name <span style="color: red">*</span></label>
-            <input name="company" type="text" />
+          <div class="field">
+            <label>CSN *</label>
+            <input name="00NVA0000095Lt8" type="text" />
           </div>
-
-          <div class="row">
-            <label>Part Number <span style="color: red">*</span></label>
-            <input name="00NVA0000095LtD" type="text" />
+          <div class="field">
+            <label>CSO *</label>
+            <input name="00NVA0000095Lt9" type="text" />
           </div>
+        </div>
 
-          <div class="row">
-            <label>Serial Number <span style="color: red">*</span></label>
-            <input name="00NVA0000095LtI" type="text" />
-          </div>
+        <div class="row">
+          <label>Aircraft Type *</label>
+          <input name="00NVA0000095Lt7" type="text" />
+        </div>
 
-          <div class="pairs-grid">
-            <div class="field">
-              <label>TSN <span style="color: red">*</span></label>
-              <input name="00NVA0000095LtK" type="text" />
-            </div>
-            <div class="field">
-              <label>TSO <span style="color: red">*</span></label>
-              <input name="00NVA0000095LtL" type="text" />
-            </div>
-            <div class="field">
-              <label>CSN <span style="color: red">*</span></label>
-              <input name="00NVA0000095Lt8" type="text" />
-            </div>
-            <div class="field">
-              <label>CSO <span style="color: red">*</span></label>
-              <input name="00NVA0000095Lt9" type="text" />
-            </div>
-          </div>
+        <div class="row">
+          <label>Aircraft Serial Number *</label>
+          <input name="00NVA0000095Lt5" type="text" />
+        </div>
 
-          <div class="row">
-            <label>Aircraft Type <span style="color: red">*</span></label>
-            <input name="00NVA0000095Lt7" type="text" />
-          </div>
+        <div class="row">
+          <label>Aircraft Tail Number *</label>
+          <input name="00NVA0000095Lt6" type="text" />
+        </div>
 
-          <div class="row">
-            <label
-              >Aircraft Serial Number <span style="color: red">*</span></label
-            >
-            <input name="00NVA0000095Lt5" type="text" />
-          </div>
+        <div class="row">
+          <label>Reason For Removal *</label>
+          <textarea name="00NVA0000095LtG"></textarea>
+        </div>
 
-          <div class="row">
-            <label
-              >Aircraft Tail Number <span style="color: red">*</span></label
-            >
-            <input name="00NVA0000095Lt6" type="text" />
-          </div>
+        <div class="terms">
+          I hereby state this part was removed from the aircraft identified above and has not been subjected to any major engine failure, accident, or fire. I further affirm all information to be true and correct. By submitting the digital core card form, you agree to the
+          <a href="https://crsjetspares.com/general-terms-and-conditions-for-sale-and-exchange-of-goods/" target="_blank">
+            Terms and Conditions
+          </a>.
+        </div>
 
-          <div class="row">
-            <label>Reason For Removal <span style="color: red">*</span></label>
-            <textarea name="00NVA0000095LtG"></textarea>
-          </div>
-
-          <div class="terms">
-            I hereby state this part was removed from the aircraft identified above and has not been subjected to any major engine failure, accident, or fire. I further affirm all information to be true and correct. By submitting the digital core card form, you are agreeing to the
-            <a
-              href="https://crsjetspares.com/general-terms-and-conditions-for-sale-and-exchange-of-goods/"
-              target="_blank"
-            >
-               Terms and Conditions </a
-            >listed on the CRS Jet Spares invoice and website.
-          </div>
-
-          <div class="submit-wrap">
-            <button class="submit-btn" type="submit">Submit</button>
-          </div>
-        </form>
-      </div>
+        <div class="submit-wrap">
+          <button class="submit-btn" type="submit">Submit</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <script>
-      document.querySelector("form").addEventListener("submit", function (e) {
-        const subject = document.getElementById("subject");
-        if (!subject.value.trim()) {
-          alert("Please enter the Sales Order Number.");
-          e.preventDefault();
-        } else if (!subject.value.startsWith("Support related to ")) {
-          subject.value = "Support related to " + subject.value;
-        }
-      });
-    </script>
-  </body>
+  <script>
+    document.querySelector("form").addEventListener("submit", function (e) {
+      const subject = document.getElementById("subject");
+      if (!subject.value.trim()) {
+        alert("Please enter the Sales Order Number.");
+        e.preventDefault();
+      } else if (!subject.value.startsWith("Support related to ")) {
+        subject.value = "Support related to " + subject.value;
+      }
+    });
+  </script>
+
+</body>
 </html>
