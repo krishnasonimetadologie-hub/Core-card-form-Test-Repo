@@ -195,23 +195,11 @@
 
     <!-- FORM WRAPPER -->
     <div class="form-wrap">
-      <form
-        action="https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00DVA000007Hanq"
-        method="POST"
-        novalidate
-      >
-
-
-        <input type="hidden" name="orgid" value="00DVA000007Hanq" /> <!-- Org ID -->
-        <input type="hidden" name="retURL" value="https://crsjetspares.com" /> <!-- Redirect URL -->
-        <input type="hidden" name="recordType" value="Sales" /> <!-- RecordType -->
-        <input type="hidden" name="type" value="Sales" /> <!-- Type -->
-        <input type="hidden" name="00NVA0000095wfh" value="Information" /> <!-- Sub_Type__c -->
-        <input type="hidden" name="00NVA0000095x8j" value="Core Card Form" /> <!-- Category__c -->
+      <form novalidate>
 
         <!-- SUBJECT -->
         <div class="row">
-          <label>Sales Order Number* <span style="color:red">*</span></label>
+          <label>Sales Order Number** <span style="color:red">*</span></label>
           <input id="subject" name="subject" type="text" /> <!-- Case.Subject -->
         </div>
 
@@ -281,6 +269,12 @@
           <textarea name="00NVA0000095LtG"></textarea> <!-- Reason_For_Removal__c -->
         </div>
 
+        <!-- FILE ATTACHMENTS -->
+        <div class="row">
+          <label>Attach Files (Optional)</label>
+          <input id="fileAttachment" type="file" multiple style="padding: 6px;" />
+        </div>
+
         <!-- TERMS -->
         <div class="terms">
           I hereby state this part was removed from the aircraft identified above and has not been subjected to any major engine failure, accident, or fire.
@@ -346,16 +340,111 @@
       return await response.json();
     }
 
+    async function createCase(formData, accessToken) {
+      const caseData = {
+        Subject: formData.subject,
+        SuppliedCompany: formData.company,
+        Type: 'Sales',
+        RecordTypeId: formData.recordTypeId,
+        Customer_Name__c: formData.customerName,
+        Part_Number__c: formData.partNumber,
+        Serial_Number__c: formData.serialNumber,
+        TSN__c: formData.tsn,
+        TSO__c: formData.tso,
+        CSN__c: formData.csn,
+        CSO__c: formData.cso,
+        Aircraft_Type__c: formData.aircraftType,
+        Aircraft_Serial__c: formData.aircraftSerial,
+        Aircraft_Tail__c: formData.aircraftTail,
+        Reason_For_Removal__c: formData.reasonForRemoval,
+        Sub_Type__c: 'Information',
+        Category__c: 'Core Card Form'
+      };
+
+      const response = await fetch(SF_INSTANCE + '/services/data/v62.0/sobjects/Case', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(caseData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Case creation error:', errorData);
+        throw new Error('Failed to create case');
+      }
+
+      const result = await response.json();
+      return result.id;
+    }
+
+    async function uploadFile(file, caseId, accessToken) {
+      const reader = new FileReader();
+
+      return new Promise((resolve, reject) => {
+        reader.onload = async function(e) {
+          const base64Content = btoa(
+            new Uint8Array(e.target.result)
+              .reduce((data, byte) => data + String.fromCharCode(byte), '')
+          );
+
+          const contentVersionData = {
+            Title: file.name,
+            PathOnClient: file.name,
+            VersionData: base64Content,
+            FirstPublishLocationId: caseId
+          };
+
+          try {
+            const response = await fetch(SF_INSTANCE + '/services/data/v62.0/sobjects/ContentVersion', {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(contentVersionData)
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              console.error('File upload error:', errorData);
+              throw new Error('Failed to upload file: ' + file.name);
+            }
+
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        reader.onerror = function() {
+          reject(new Error('Failed to read file: ' + file.name));
+        };
+
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
     function extractSalesOrderNumber(subject) {
       const match = subject.match(/SO-\d+/i);
       return match ? match[0].toUpperCase() : null;
     }
 
-    document.querySelector("form").addEventListener("submit", async function (e) {
-      e.preventDefault(); 
+    function getRecordTypeId() {
+      return new Promise((resolve) => {
+        resolve('012VA000000qaPiYAI');
+      });
+    }
 
+    document.querySelector("form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
       const subject = document.getElementById("subject");
       const submitBtn = document.querySelector(".submit-btn");
+      const fileInput = document.getElementById("fileAttachment");
 
       if (!subject.value.trim()) {
         alert("Please enter the Sales Order Number.");
@@ -376,22 +465,50 @@
 
         const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
 
-        if (verificationResult.salesOrderExists) {
-          
-          if (!subject.value.startsWith("Support related to ")) {
-            subject.value = "Support related to " + subject.value;
-          }
-
-          alert("Thank You - your form has been submitted");
-          e.target.submit();
-        } else {
+        if (!verificationResult.salesOrderExists) {
           alert("Mentioned Sales Order number does not exist with Us");
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit';
+          return;
         }
+
+        submitBtn.textContent = 'Creating Case...';
+
+        const recordTypeId = await getRecordTypeId();
+
+        const formData = {
+          subject: "Support related to " + subject.value,
+          company: form.querySelector('[name="company"]').value,
+          recordTypeId: '012VA000001m6XBYAY',
+          customerName: form.querySelector('[name="00NVA00000AeR8b"]').value,
+          partNumber: form.querySelector('[name="00NVA0000095LtD"]').value,
+          serialNumber: form.querySelector('[name="00NVA0000095LtI"]').value,
+          tsn: form.querySelector('[name="00NVA0000095LtK"]').value,
+          tso: form.querySelector('[name="00NVA0000095LtL"]').value,
+          csn: form.querySelector('[name="00NVA0000095Lt8"]').value,
+          cso: form.querySelector('[name="00NVA0000095Lt9"]').value,
+          aircraftType: form.querySelector('[name="00NVA0000095Lt7"]').value,
+          aircraftSerial: form.querySelector('[name="00NVA0000095Lt5"]').value,
+          aircraftTail: form.querySelector('[name="00NVA0000095Lt6"]').value,
+          reasonForRemoval: form.querySelector('[name="00NVA0000095LtG"]').value
+        };
+
+        const caseId = await createCase(formData, accessToken);
+
+        if (fileInput.files.length > 0) {
+          submitBtn.textContent = 'Uploading Files...';
+
+          for (let i = 0; i < fileInput.files.length; i++) {
+            await uploadFile(fileInput.files[i], caseId, accessToken);
+          }
+        }
+
+        alert("Thank You - your form has been submitted");
+        window.location.href = "https://crsjetspares.com";
+
       } catch (error) {
-        console.error('Verification error:', error);
-        alert("An error occurred while verifying the sales order. Please try again.");
+        console.error('Submission error:', error);
+        alert("An error occurred while submitting the form. Please try again.");
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit';
       }
