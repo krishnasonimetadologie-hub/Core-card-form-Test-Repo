@@ -13,16 +13,16 @@
       box-sizing: border-box;
     }
 
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       color: #0a2a43;
-      font-size: 12.5px;
+      font-size: clamp(11px, 2.5vw, 13px); /* smaller on mobile */
       position: relative;
       z-index: 0;
     }
 
-    /* Background */
     body::before {
       content: "";
       position: fixed;
@@ -35,34 +35,34 @@
       z-index: -1;
     }
 
-    /* Header */
+
     .header {
       text-align: center;
-      padding: 22px 14px 10px;
+      padding: 18px 12px 8px;
     }
 
     .header img {
-      height: 62px;
-      width: 180px;
-      margin-bottom: 5px;
+      height: 52px;
+      width: 160px;
+      margin-bottom: 4px;
     }
 
     .header .tag {
-      font-size: 16px;
+      font-size: clamp(13px, 3vw, 15px);
       font-weight: 600;
     }
 
     .header .tag div {
-      font-size: 13px;
+      font-size: clamp(11px, 2.6vw, 12.5px);
       font-style: italic;
       font-weight: 500;
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
-    /* Card */
+
     .page {
       max-width: 660px;
-      margin: 6px auto 24px;
+      margin: 6px auto 20px;
       background: #ffffff;
       border-radius: 14px;
       box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
@@ -70,26 +70,26 @@
     }
 
     .title {
-      margin-top: 14px;
-      font-size: 23px;
+      margin-top: 12px;
+      font-size: clamp(17px, 4vw, 22px);
       text-align: center;
       font-weight: 600;
       color: #2f5fa7;
     }
 
-    /* Form */
+    
     .form-wrap {
-      padding: 18px 26px 26px;
+      padding: 16px 22px 22px;
     }
 
     .row {
       display: flex;
       flex-direction: column;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
     }
 
     .row label {
-      font-size: 13px;
+      font-size: clamp(11px, 2.6vw, 12.5px);
       font-weight: 500;
       margin-bottom: 3px;
       color: #333;
@@ -102,22 +102,21 @@
       border: none;
       background: #f0f4f9;
       border-radius: 4px;
-      padding: 8px 10px;
-      font-size: 12.5px;
+      padding: 8px 9px;
+      font-size: clamp(11.5px, 2.7vw, 13px);
       outline: none;
     }
 
     .row textarea {
-      min-height: 64px;
+      min-height: 60px;
       resize: vertical;
     }
 
-    /* Two-column grid */
     .pairs-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     .pairs-grid .field {
@@ -126,17 +125,17 @@
     }
 
     .pairs-grid label {
-      font-size: 12.5px;
+      font-size: clamp(11px, 2.6vw, 12.5px);
       font-weight: 500;
       margin-bottom: 3px;
       color: #333;
     }
 
-    /* Terms */
+    
     .terms {
-      font-size: 12px;
+      font-size: clamp(10.5px, 2.5vw, 12px);
       color: #333;
-      line-height: 1.35;
+      line-height: 1.4;
       margin-top: 8px;
     }
 
@@ -146,35 +145,34 @@
       text-decoration: underline;
     }
 
-    /* Submit */
+
     .submit-wrap {
       text-align: center;
-      margin-top: 16px;
+      margin-top: 14px;
     }
 
     .submit-btn {
       background: #2f5fa7;
       color: #ffffff;
-      padding: 7px 30px;
+      padding: 7px 26px;
       border-radius: 4px;
       border: none;
-      font-size: 13px;
+      font-size: clamp(12px, 3vw, 14px);
       font-weight: 600;
       cursor: pointer;
     }
 
-    /* Mobile */
-    @media (max-width: 768px) {
-      .page {
-        margin: 14px 10px;
+    @media (max-width: 375px) {
+      body {
+        font-size: 11px;
       }
 
-      .form-wrap {
-        padding: 18px;
+      .title {
+        font-size: 16px;
       }
 
-      .pairs-grid {
-        grid-template-columns: 1fr;
+      .submit-btn {
+        font-size: 12px;
       }
     }
   </style>
@@ -182,6 +180,7 @@
 
 <body>
 
+  <!-- HEADER -->
   <div class="header">
     <img src="https://i.ibb.co/ZpQnHQLd/image.png" alt="CRS Jet Spares" />
     <div class="tag">
@@ -190,102 +189,118 @@
     </div>
   </div>
 
+  <!-- CARD -->
   <div class="page">
     <div class="title">Core Card</div>
 
+    <!-- FORM WRAPPER -->
     <div class="form-wrap">
       <form
         action="https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00DVA000007Hanq"
         method="POST"
         novalidate
       >
-        <!-- Hidden Fields -->
-        <input type="hidden" name="orgid" value="00DVA000007Hanq" />
-        <input type="hidden" name="retURL" value="http://gmail.com" />
-        <input type="hidden" name="recordType" value="Sales" />
-        <input type="hidden" name="type" value="Sales" />
-        <input type="hidden" name="00NVA0000095wfh" value="Information" />
-        <input type="hidden" name="00NVA0000095x8j" value="Core Card Form" />
 
+
+        <input type="hidden" name="orgid" value="00DVA000007Hanq" /> <!-- Org ID -->
+        <input type="hidden" name="retURL" value="http://gmail.com" /> <!-- Redirect URL -->
+        <input type="hidden" name="recordType" value="Sales" /> <!-- RecordType -->
+        <input type="hidden" name="type" value="Sales" /> <!-- Type -->
+        <input type="hidden" name="00NVA0000095wfh" value="Information" /> <!-- Sub_Type__c -->
+        <input type="hidden" name="00NVA0000095x8j" value="Core Card Form" /> <!-- Category__c -->
+
+        <!-- SUBJECT -->
         <div class="row">
           <label>Sales Order Number <span style="color:red">*</span></label>
-          <input id="subject" name="subject" type="text" />
+          <input id="subject" name="subject" type="text" /> <!-- Case.Subject -->
         </div>
 
+        <!-- CUSTOMER NAME -->
         <div class="row">
           <label>Customer Name <span style="color:red">*</span></label>
-          <input name="00NVA00000AeR8b" type="text" />
+          <input name="00NVA00000AeR8b" type="text" /> <!-- Customer_Name__c -->
         </div>
 
+        <!-- COMPANY -->
         <div class="row">
           <label>Company Name <span style="color:red">*</span></label>
-          <input name="company" type="text" />
+          <input name="company" type="text" /> <!-- Company -->
         </div>
 
+        <!-- PART NUMBER -->
         <div class="row">
           <label>Part Number <span style="color:red">*</span></label>
-          <input name="00NVA0000095LtD" type="text" />
+          <input name="00NVA0000095LtD" type="text" /> <!-- Part_Number__c -->
         </div>
 
+        <!-- SERIAL NUMBER -->
         <div class="row">
           <label>Serial Number <span style="color:red">*</span></label>
-          <input name="00NVA0000095LtI" type="text" />
+          <input name="00NVA0000095LtI" type="text" /> <!-- Serial_Number__c -->
         </div>
 
+        <!-- TSN / TSO / CSN / CSO -->
         <div class="pairs-grid">
           <div class="field">
             <label>TSN *</label>
-            <input name="00NVA0000095LtK" type="text" />
+            <input name="00NVA0000095LtK" type="text" /> <!-- TSN__c -->
           </div>
           <div class="field">
             <label>TSO *</label>
-            <input name="00NVA0000095LtL" type="text" />
+            <input name="00NVA0000095LtL" type="text" /> <!-- TSO__c -->
           </div>
           <div class="field">
             <label>CSN *</label>
-            <input name="00NVA0000095Lt8" type="text" />
+            <input name="00NVA0000095Lt8" type="text" /> <!-- CSN__c -->
           </div>
           <div class="field">
             <label>CSO *</label>
-            <input name="00NVA0000095Lt9" type="text" />
+            <input name="00NVA0000095Lt9" type="text" /> <!-- CSO__c -->
           </div>
         </div>
 
+        <!-- AIRCRAFT DETAILS -->
         <div class="row">
           <label>Aircraft Type *</label>
-          <input name="00NVA0000095Lt7" type="text" />
+          <input name="00NVA0000095Lt7" type="text" /> <!-- Aircraft_Type__c -->
         </div>
 
         <div class="row">
           <label>Aircraft Serial Number *</label>
-          <input name="00NVA0000095Lt5" type="text" />
+          <input name="00NVA0000095Lt5" type="text" /> <!-- Aircraft_Serial__c -->
         </div>
 
         <div class="row">
           <label>Aircraft Tail Number *</label>
-          <input name="00NVA0000095Lt6" type="text" />
+          <input name="00NVA0000095Lt6" type="text" /> <!-- Aircraft_Tail__c -->
         </div>
 
+        <!-- REASON FOR REMOVAL -->
         <div class="row">
           <label>Reason For Removal *</label>
-          <textarea name="00NVA0000095LtG"></textarea>
+          <textarea name="00NVA0000095LtG"></textarea> <!-- Reason_For_Removal__c -->
         </div>
 
+        <!-- TERMS -->
         <div class="terms">
-          I hereby state this part was removed from the aircraft identified above and has not been subjected to any major engine failure, accident, or fire. I further affirm all information to be true and correct. By submitting the digital core card form, you agree to the
+          I hereby state this part was removed from the aircraft identified above and has not been subjected to any major engine failure, accident, or fire.
+          By submitting the digital core card form, you agree to the
           <a href="https://crsjetspares.com/general-terms-and-conditions-for-sale-and-exchange-of-goods/" target="_blank">
             Terms and Conditions
           </a>.
         </div>
 
+        <!-- SUBMIT -->
         <div class="submit-wrap">
           <button class="submit-btn" type="submit">Submit</button>
         </div>
+
       </form>
     </div>
   </div>
 
   <script>
+    // Prefix Subject before submit
     document.querySelector("form").addEventListener("submit", function (e) {
       const subject = document.getElementById("subject");
       if (!subject.value.trim()) {
