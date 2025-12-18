@@ -756,19 +756,19 @@
           reasonForRemoval: form.querySelector('[name="reasonForRemoval"]').value
         };
 
+        updateLoading('Preparing Submission...', 50);
         const recordTypeId = await getRecordTypeId(accessToken);
         formData.recordTypeId = recordTypeId;
 
         if (fileInput.files.length > 0) {
-          // Upload files first, then create case with files
-          updateLoading('Preparing Files...', 50);
+          updateLoading('Reading Files...', 60);
 
           const totalFiles = fileInput.files.length;
           const fileDataArray = [];
 
           for (let i = 0; i < totalFiles; i++) {
-            const fileProgress = 50 + (30 * ((i + 1) / totalFiles));
-            updateLoading(`Processing Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
+            const fileProgress = 60 + (30 * ((i + 1) / totalFiles));
+            updateLoading(`Reading Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
 
             // Read file as base64
             const file = fileInput.files[i];
@@ -791,10 +791,11 @@
             fileDataArray.push(fileData);
           }
 
-          updateLoading('Creating Case...', 85);
+          updateLoading('Files Ready', 90);
+          updateLoading('Creating Case in Salesforce...', 92);
           const caseId = await createCase(formData, accessToken);
 
-          updateLoading('Attaching Files to Case...', 90);
+          updateLoading('Uploading Files...', 94);
           for (let i = 0; i < fileDataArray.length; i++) {
             const contentVersionData = {
               Title: fileDataArray[i].name,
@@ -817,20 +818,17 @@
             }
           }
 
-          updateLoading('All Files Attached', 95);
+          updateLoading('Submission Complete', 100);
         } else {
-          updateLoading('Creating Case...', 85);
+          updateLoading('Creating Case in Salesforce...', 95);
           const caseId = await createCase(formData, accessToken);
-          updateLoading('Case Created', 95);
+          updateLoading('Submission Complete', 100);
         }
 
-        updateLoading('Complete!', 100);
-        setTimeout(() => {
-          hideLoading();
-          showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
-            window.location.href = "https://crsjetspares.com";
-          });
-        }, 500);
+        hideLoading();
+        showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
+          window.location.href = "https://crsjetspares.com";
+        });
 
       } catch (error) {
         console.error('Submission error:', error);
