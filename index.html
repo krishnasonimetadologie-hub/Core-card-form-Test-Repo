@@ -721,11 +721,11 @@
       }
 
       submitBtn.disabled = true;
-      showLoading('Verifying Sales Order...', 10);
+      showLoading('Authenticating...', 0);
 
       try {
         const accessToken = await getAccessToken();
-        updateLoading('Verifying Sales Order...', 25);
+        updateLoading('Verifying Sales Order...', 20);
 
         const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
 
@@ -736,13 +736,13 @@
           return;
         }
 
-        updateLoading('Creating Case...', 50);
-        const recordTypeId = await getRecordTypeId(accessToken);
+        updateLoading('Sales Order Verified', 40);
 
+        // Prepare form data
         const formData = {
           subject: "Support related to " + subject.value,
           company: form.querySelector('[name="company"]').value,
-          recordTypeId: recordTypeId,
+          recordTypeId: null,
           customerName: form.querySelector('[name="customerName"]').value,
           partNumber: form.querySelector('[name="partNumber"]').value,
           serialNumber: form.querySelector('[name="serialNumber"]').value,
@@ -756,19 +756,72 @@
           reasonForRemoval: form.querySelector('[name="reasonForRemoval"]').value
         };
 
-        updateLoading('Creating Case...', 65);
-        const caseId = await createCase(formData, accessToken);
+        const recordTypeId = await getRecordTypeId(accessToken);
+        formData.recordTypeId = recordTypeId;
 
         if (fileInput.files.length > 0) {
+          // Upload files first, then create case with files
+          updateLoading('Preparing Files...', 50);
+
           const totalFiles = fileInput.files.length;
+          const fileDataArray = [];
+
           for (let i = 0; i < totalFiles; i++) {
-            const fileProgress = 75 + (20 * (i / totalFiles));
-            updateLoading(`Uploading Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
-            await uploadFile(fileInput.files[i], caseId, accessToken);
+            const fileProgress = 50 + (30 * ((i + 1) / totalFiles));
+            updateLoading(`Processing Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
+
+            // Read file as base64
+            const file = fileInput.files[i];
+            const fileData = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                const base64Content = btoa(
+                  new Uint8Array(e.target.result)
+                    .reduce((data, byte) => data + String.fromCharCode(byte), '')
+                );
+                resolve({
+                  name: file.name,
+                  data: base64Content
+                });
+              };
+              reader.onerror = () => reject(new Error('Failed to read file'));
+              reader.readAsArrayBuffer(file);
+            });
+
+            fileDataArray.push(fileData);
           }
-          updateLoading('Finalizing...', 95);
+
+          updateLoading('Creating Case...', 85);
+          const caseId = await createCase(formData, accessToken);
+
+          updateLoading('Attaching Files to Case...', 90);
+          for (let i = 0; i < fileDataArray.length; i++) {
+            const contentVersionData = {
+              Title: fileDataArray[i].name,
+              PathOnClient: fileDataArray[i].name,
+              VersionData: fileDataArray[i].data,
+              FirstPublishLocationId: caseId
+            };
+
+            const response = await fetch(SF_INSTANCE + '/services/data/v62.0/sobjects/ContentVersion', {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(contentVersionData)
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to upload file: ' + fileDataArray[i].name);
+            }
+          }
+
+          updateLoading('All Files Attached', 95);
         } else {
-          updateLoading('Finalizing...', 95);
+          updateLoading('Creating Case...', 85);
+          const caseId = await createCase(formData, accessToken);
+          updateLoading('Case Created', 95);
         }
 
         updateLoading('Complete!', 100);
