@@ -265,6 +265,78 @@
       font-style: italic;
       margin-top: 4px;
     }
+
+    /* Loading Modal Styles */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 42, 67, 0.85);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-content {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 32px 36px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 20px;
+      border: 4px solid #e3f2fd;
+      border-top: 4px solid #2f5fa7;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: clamp(14px, 3.2vw, 16px);
+      font-weight: 600;
+      color: #0a2a43;
+      margin-bottom: 20px;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background: #e3f2fd;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #2f5fa7, #4a7bc8);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(47, 95, 167, 0.5);
+    }
+
+    .progress-label {
+      font-size: clamp(11px, 2.6vw, 13px);
+      color: #666;
+    }
   </style>
 </head>
 
@@ -384,6 +456,18 @@
     </div>
   </div>
 
+  <!-- Loading Modal -->
+  <div id="loadingModal" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div id="loadingText" class="loading-text">Processing...</div>
+      <div class="progress-container">
+        <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">0%</div>
+    </div>
+  </div>
+
   <!-- Modal Popup -->
   <div id="modal" class="modal-overlay">
     <div class="modal-content">
@@ -431,6 +515,34 @@
         window.modalOnClose();
         window.modalOnClose = null;
       }
+    }
+
+    // Loading Modal Functions
+    function showLoading(text, progress) {
+      const loadingModal = document.getElementById('loadingModal');
+      const loadingText = document.getElementById('loadingText');
+      const progressBar = document.getElementById('progressBar');
+      const progressLabel = document.getElementById('progressLabel');
+
+      loadingText.textContent = text;
+      progressBar.style.width = progress + '%';
+      progressLabel.textContent = progress + '%';
+      loadingModal.className = 'loading-overlay show';
+    }
+
+    function updateLoading(text, progress) {
+      const loadingText = document.getElementById('loadingText');
+      const progressBar = document.getElementById('progressBar');
+      const progressLabel = document.getElementById('progressLabel');
+
+      loadingText.textContent = text;
+      progressBar.style.width = progress + '%';
+      progressLabel.textContent = progress + '%';
+    }
+
+    function hideLoading() {
+      const loadingModal = document.getElementById('loadingModal');
+      loadingModal.className = 'loading-overlay';
     }
 
     async function getAccessToken() {
@@ -609,22 +721,22 @@
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Verifying...';
+      showLoading('Verifying Sales Order...', 10);
 
       try {
         const accessToken = await getAccessToken();
+        updateLoading('Verifying Sales Order...', 25);
 
         const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
 
         if (!verificationResult.salesOrderExists) {
+          hideLoading();
           showModal('error', 'Sales Order Not Found', 'Mentioned Sales Order number does not exist with Us');
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit';
           return;
         }
 
-        submitBtn.textContent = 'Creating Case...';
-
+        updateLoading('Creating Case...', 50);
         const recordTypeId = await getRecordTypeId(accessToken);
 
         const formData = {
@@ -644,25 +756,34 @@
           reasonForRemoval: form.querySelector('[name="reasonForRemoval"]').value
         };
 
+        updateLoading('Creating Case...', 65);
         const caseId = await createCase(formData, accessToken);
 
         if (fileInput.files.length > 0) {
-          submitBtn.textContent = 'Uploading Files...';
-
-          for (let i = 0; i < fileInput.files.length; i++) {
+          const totalFiles = fileInput.files.length;
+          for (let i = 0; i < totalFiles; i++) {
+            const fileProgress = 75 + (20 * (i / totalFiles));
+            updateLoading(`Uploading Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
             await uploadFile(fileInput.files[i], caseId, accessToken);
           }
+          updateLoading('Finalizing...', 95);
+        } else {
+          updateLoading('Finalizing...', 95);
         }
 
-        showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
-          window.location.href = "https://crsjetspares.com";
-        });
+        updateLoading('Complete!', 100);
+        setTimeout(() => {
+          hideLoading();
+          showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
+            window.location.href = "https://crsjetspares.com";
+          });
+        }, 500);
 
       } catch (error) {
         console.error('Submission error:', error);
+        hideLoading();
         showModal('error', 'Submission Failed', 'An error occurred while submitting the form. Please try again.');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit';
       }
     });
   </script>
