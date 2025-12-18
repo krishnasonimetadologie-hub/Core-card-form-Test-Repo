@@ -199,74 +199,74 @@
 
         <!-- SUBJECT -->
         <div class="row">
-          <label>Sales Order Number** <span style="color:red">*</span></label>
-          <input id="subject" name="subject" type="text" /> <!-- Case.Subject -->
+          <label>Sales Order Number <span style="color:red">*</span></label>
+          <input id="subject" name="subject" type="text" />
         </div>
 
         <!-- CUSTOMER NAME -->
         <div class="row">
           <label>Customer Name <span style="color:red">*</span></label>
-          <input name="00NVA00000AeR8b" type="text" /> <!-- Customer_Name__c -->
+          <input name="customerName" type="text" />
         </div>
 
         <!-- COMPANY -->
         <div class="row">
           <label>Company Name <span style="color:red">*</span></label>
-          <input name="company" type="text" /> <!-- Company -->
+          <input name="company" type="text" />
         </div>
 
         <!-- PART NUMBER -->
         <div class="row">
           <label>Part Number <span style="color:red">*</span></label>
-          <input name="00NVA0000095LtD" type="text" /> <!-- Part_Number__c -->
+          <input name="partNumber" type="text" />
         </div>
 
         <!-- SERIAL NUMBER -->
         <div class="row">
           <label>Serial Number <span style="color:red">*</span></label>
-          <input name="00NVA0000095LtI" type="text" /> <!-- Serial_Number__c -->
+          <input name="serialNumber" type="text" />
         </div>
 
         <!-- TSN / TSO / CSN / CSO -->
         <div class="pairs-grid">
           <div class="field">
             <label>TSN *</label>
-            <input name="00NVA0000095LtK" type="text" /> <!-- TSN__c -->
+            <input name="tsn" type="text" />
           </div>
           <div class="field">
             <label>TSO *</label>
-            <input name="00NVA0000095LtL" type="text" /> <!-- TSO__c -->
+            <input name="tso" type="text" />
           </div>
           <div class="field">
             <label>CSN *</label>
-            <input name="00NVA0000095Lt8" type="text" /> <!-- CSN__c -->
+            <input name="csn" type="text" />
           </div>
           <div class="field">
             <label>CSO *</label>
-            <input name="00NVA0000095Lt9" type="text" /> <!-- CSO__c -->
+            <input name="cso" type="text" />
           </div>
         </div>
 
         <!-- AIRCRAFT DETAILS -->
         <div class="row">
           <label>Aircraft Type *</label>
-          <input name="00NVA0000095Lt7" type="text" /> <!-- Aircraft_Type__c -->
+          <input name="aircraftType" type="text" />
         </div>
 
         <div class="row">
           <label>Aircraft Serial Number *</label>
-          <input name="00NVA0000095Lt5" type="text" /> <!-- Aircraft_Serial__c -->
+          <input name="aircraftSerial" type="text" />
         </div>
 
         <div class="row">
           <label>Aircraft Tail Number *</label>
-          <input name="00NVA0000095Lt6" type="text" /> <!-- Aircraft_Tail__c -->
+          <input name="aircraftTail" type="text" />
         </div>
 
         <!-- REASON FOR REMOVAL -->
         <div class="row">
           <label>Reason For Removal *</label>
-          <textarea name="00NVA0000095LtG"></textarea> <!-- Reason_For_Removal__c -->
+          <textarea name="reasonForRemoval"></textarea>
         </div>
 
         <!-- FILE ATTACHMENTS -->
@@ -432,10 +432,28 @@
       return match ? match[0].toUpperCase() : null;
     }
 
-    function getRecordTypeId() {
-      return new Promise((resolve) => {
-        resolve('012VA000000qaPiYAI');
+    async function getRecordTypeId(accessToken) {
+      const query = "SELECT Id FROM RecordType WHERE SobjectType='Case' AND DeveloperName='Sales' LIMIT 1";
+      const url = SF_INSTANCE + '/services/data/v62.0/query?q=' + encodeURIComponent(query);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json'
+        }
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to query Record Type');
+      }
+
+      const data = await response.json();
+      if (data.records && data.records.length > 0) {
+        return data.records[0].Id;
+      } else {
+        throw new Error('Sales Record Type not found');
+      }
     }
 
     document.querySelector("form").addEventListener("submit", async function (e) {
@@ -474,23 +492,23 @@
 
         submitBtn.textContent = 'Creating Case...';
 
-        const recordTypeId = await getRecordTypeId();
+        const recordTypeId = await getRecordTypeId(accessToken);
 
         const formData = {
           subject: "Support related to " + subject.value,
           company: form.querySelector('[name="company"]').value,
-          recordTypeId: '012VA000001m6XBYAY',
-          customerName: form.querySelector('[name="00NVA00000AeR8b"]').value,
-          partNumber: form.querySelector('[name="00NVA0000095LtD"]').value,
-          serialNumber: form.querySelector('[name="00NVA0000095LtI"]').value,
-          tsn: form.querySelector('[name="00NVA0000095LtK"]').value,
-          tso: form.querySelector('[name="00NVA0000095LtL"]').value,
-          csn: form.querySelector('[name="00NVA0000095Lt8"]').value,
-          cso: form.querySelector('[name="00NVA0000095Lt9"]').value,
-          aircraftType: form.querySelector('[name="00NVA0000095Lt7"]').value,
-          aircraftSerial: form.querySelector('[name="00NVA0000095Lt5"]').value,
-          aircraftTail: form.querySelector('[name="00NVA0000095Lt6"]').value,
-          reasonForRemoval: form.querySelector('[name="00NVA0000095LtG"]').value
+          recordTypeId: recordTypeId,
+          customerName: form.querySelector('[name="customerName"]').value,
+          partNumber: form.querySelector('[name="partNumber"]').value,
+          serialNumber: form.querySelector('[name="serialNumber"]').value,
+          tsn: form.querySelector('[name="tsn"]').value,
+          tso: form.querySelector('[name="tso"]').value,
+          csn: form.querySelector('[name="csn"]').value,
+          cso: form.querySelector('[name="cso"]').value,
+          aircraftType: form.querySelector('[name="aircraftType"]').value,
+          aircraftSerial: form.querySelector('[name="aircraftSerial"]').value,
+          aircraftTail: form.querySelector('[name="aircraftTail"]').value,
+          reasonForRemoval: form.querySelector('[name="reasonForRemoval"]').value
         };
 
         const caseId = await createCase(formData, accessToken);
