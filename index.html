@@ -300,14 +300,100 @@
   </div>
 
   <script>
-    // Prefix Subject before submit
-    document.querySelector("form").addEventListener("submit", function (e) {
+    const CLIENT_ID = '3MVG9O_Hkc8TP1aFEeEWU9ZyX2f05bkHPl2XawuPFSJwal8ZF1mDPue9o0kPDBVcOU64PRCCEZnQq2aIJmKv5';
+    const CLIENT_SECRET = '4DA156C1380C7AA53FCE2C408620F764D3D46C7C4453D58077B173206EA351C5';
+    const SF_INSTANCE = 'https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com';
+    const OAUTH_URL = SF_INSTANCE + '/services/oauth2/token';
+    const API_ENDPOINT = SF_INSTANCE + '/services/apexrest/caseManagement/';
+
+    async function getAccessToken() {
+      const params = new URLSearchParams();
+      params.append('grant_type', 'client_credentials');
+      params.append('client_id', CLIENT_ID);
+      params.append('client_secret', CLIENT_SECRET);
+
+      const response = await fetch(OAUTH_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to authenticate');
+      }
+
+      const data = await response.json();
+      return data.access_token;
+    }
+
+    async function verifySalesOrder(salesOrderNumber, accessToken) {
+      const url = API_ENDPOINT + '?salesOrderNumber=' + encodeURIComponent(salesOrderNumber);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to verify sales order');
+      }
+
+      return await response.json();
+    }
+
+    function extractSalesOrderNumber(subject) {
+      const match = subject.match(/SO-\d+/i);
+      return match ? match[0].toUpperCase() : null;
+    }
+
+    document.querySelector("form").addEventListener("submit", async function (e) {
+      e.preventDefault(); 
+
       const subject = document.getElementById("subject");
+      const submitBtn = document.querySelector(".submit-btn");
+
       if (!subject.value.trim()) {
         alert("Please enter the Sales Order Number.");
-        e.preventDefault();
-      } else if (!subject.value.startsWith("Support related to ")) {
-        subject.value = "Support related to " + subject.value;
+        return;
+      }
+
+      const salesOrderNumber = extractSalesOrderNumber(subject.value);
+      if (!salesOrderNumber) {
+        alert("Please enter a valid Sales Order Number in the format SO-XXXXX");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying...';
+
+      try {
+        const accessToken = await getAccessToken();
+
+        const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
+
+        if (verificationResult.salesOrderExists) {
+          
+          if (!subject.value.startsWith("Support related to ")) {
+            subject.value = "Support related to " + subject.value;
+          }
+
+          alert("Thank You - your form has been submitted");
+          e.target.submit();
+        } else {
+          alert("Mentioned Sales Order number does not exist with Us");
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        alert("An error occurred while verifying the sales order. Please try again.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
       }
     });
   </script>
