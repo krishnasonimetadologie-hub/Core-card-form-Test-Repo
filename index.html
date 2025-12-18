@@ -175,6 +175,96 @@
         font-size: 12px;
       }
     }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 42, 67, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .modal-icon.success {
+      color: #28a745;
+    }
+
+    .modal-icon.error {
+      color: #dc3545;
+    }
+
+    .modal-title {
+      font-size: clamp(18px, 4vw, 22px);
+      font-weight: 600;
+      color: #0a2a43;
+      margin-bottom: 12px;
+    }
+
+    .modal-message {
+      font-size: clamp(13px, 3vw, 15px);
+      color: #333;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .modal-btn {
+      background: #2f5fa7;
+      color: #ffffff;
+      padding: 10px 32px;
+      border-radius: 6px;
+      border: none;
+      font-size: clamp(13px, 3vw, 15px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .modal-btn:hover {
+      background: #264a85;
+    }
+
+    .help-text {
+      font-size: clamp(10px, 2.4vw, 11.5px);
+      color: #666;
+      font-style: italic;
+      margin-top: 4px;
+    }
   </style>
 </head>
 
@@ -201,6 +291,7 @@
         <div class="row">
           <label>Sales Order Number <span style="color:red">*</span></label>
           <input id="subject" name="subject" type="text" />
+          <div class="help-text">Please enter the Sales Order number in format - SO-xxxxx</div>
         </div>
 
         <!-- CUSTOMER NAME -->
@@ -293,12 +384,54 @@
     </div>
   </div>
 
+  <!-- Modal Popup -->
+  <div id="modal" class="modal-overlay">
+    <div class="modal-content">
+      <div id="modalIcon" class="modal-icon"></div>
+      <div id="modalTitle" class="modal-title"></div>
+      <div id="modalMessage" class="modal-message"></div>
+      <button class="modal-btn" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
   <script>
     const CLIENT_ID = '3MVG9O_Hkc8TP1aFEeEWU9ZyX2f05bkHPl2XawuPFSJwal8ZF1mDPue9o0kPDBVcOU64PRCCEZnQq2aIJmKv5';
     const CLIENT_SECRET = '4DA156C1380C7AA53FCE2C408620F764D3D46C7C4453D58077B173206EA351C5';
     const SF_INSTANCE = 'https://prod-avs-crsjetspares--crsdev25.sandbox.my.salesforce.com';
     const OAUTH_URL = SF_INSTANCE + '/services/oauth2/token';
     const API_ENDPOINT = SF_INSTANCE + '/services/apexrest/caseManagement/';
+
+    // Modal Functions
+    function showModal(type, title, message, onClose) {
+      const modal = document.getElementById('modal');
+      const modalIcon = document.getElementById('modalIcon');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMessage = document.getElementById('modalMessage');
+
+      if (type === 'success') {
+        modalIcon.innerHTML = '✓';
+        modalIcon.className = 'modal-icon success';
+      } else {
+        modalIcon.innerHTML = '✕';
+        modalIcon.className = 'modal-icon error';
+      }
+
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      modal.className = 'modal-overlay show';
+
+      window.modalOnClose = onClose;
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.className = 'modal-overlay';
+
+      if (window.modalOnClose) {
+        window.modalOnClose();
+        window.modalOnClose = null;
+      }
+    }
 
     async function getAccessToken() {
       const params = new URLSearchParams();
@@ -465,13 +598,13 @@
       const fileInput = document.getElementById("fileAttachment");
 
       if (!subject.value.trim()) {
-        alert("Please enter the Sales Order Number.");
+        showModal('error', 'Required Field', 'Please enter the Sales Order Number.');
         return;
       }
 
       const salesOrderNumber = extractSalesOrderNumber(subject.value);
       if (!salesOrderNumber) {
-        alert("Please enter a valid Sales Order Number in the format SO-XXXXX");
+        showModal('error', 'Invalid Format', 'Please enter a valid Sales Order Number in the format SO-XXXXX');
         return;
       }
 
@@ -484,7 +617,7 @@
         const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
 
         if (!verificationResult.salesOrderExists) {
-          alert("Mentioned Sales Order number does not exist with Us");
+          showModal('error', 'Sales Order Not Found', 'Mentioned Sales Order number does not exist with Us');
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit';
           return;
@@ -521,12 +654,13 @@
           }
         }
 
-        alert("Thank You - your form has been submitted");
-        window.location.href = "https://crsjetspares.com";
+        showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
+          window.location.href = "https://crsjetspares.com";
+        });
 
       } catch (error) {
         console.error('Submission error:', error);
-        alert("An error occurred while submitting the form. Please try again.");
+        showModal('error', 'Submission Failed', 'An error occurred while submitting the form. Please try again.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit';
       }
