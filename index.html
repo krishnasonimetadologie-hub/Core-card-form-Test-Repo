@@ -361,14 +361,21 @@
 
         <!-- SUBJECT -->
         <div class="row">
-          <label>Sales Order Number <span style="color:red">*</span></label>
+          <label>CRS SO-# <span style="color:red">*</span></label>
           <input id="subject" name="subject" type="text" />
           <div class="help-text">Please enter the Sales Order number in format - SO-xxxxx</div>
         </div>
 
+        <!-- CUSTOMER PO -->
+        <div class="row">
+          <label>Customer PO-# <span style="color:red">*</span></label>
+          <input id="customerPo" name="customerPo" type="text" />
+          <div class="help-text">PO number provided to CRS to purchase the unit</div>
+        </div>
+
         <!-- CUSTOMER NAME -->
         <div class="row">
-          <label>Customer Name <span style="color:red">*</span></label>
+          <label>Name <span style="color:red">*</span></label>
           <input name="customerName" type="text" />
         </div>
 
@@ -393,19 +400,19 @@
         <!-- TSN / TSO / CSN / CSO -->
         <div class="pairs-grid">
           <div class="field">
-            <label>TSN *</label>
+            <label>TSN</label>
             <input name="tsn" type="text" />
           </div>
           <div class="field">
-            <label>TSO *</label>
+            <label>TSO</label>
             <input name="tso" type="text" />
           </div>
           <div class="field">
-            <label>CSN *</label>
+            <label>CSN</label>
             <input name="csn" type="text" />
           </div>
           <div class="field">
-            <label>CSO *</label>
+            <label>CSO</label>
             <input name="cso" type="text" />
           </div>
         </div>
@@ -603,7 +610,8 @@
         Aircraft_Tail__c: formData.aircraftTail,
         Reason_For_Removal__c: formData.reasonForRemoval,
         Sub_Type__c: 'Information',
-        Category__c: 'Core Card Form'
+        Category__c: 'Core Card Form',
+        Customer_PO__c : formData.customerPo
       };
 
       const response = await fetch(SF_INSTANCE + '/services/data/v62.0/sobjects/Case', {
