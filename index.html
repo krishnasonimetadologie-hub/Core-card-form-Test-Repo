@@ -337,6 +337,52 @@
       font-size: clamp(11px, 2.6vw, 13px);
       color: #666;
     }
+
+    /* ===== ATTACHMENT UPLOAD (DESIGN ONLY) ===== */
+.upload-box {
+  position: relative;
+  width: 100%;
+  min-height: 140px;
+  background: #f3f6fb;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.upload-box:hover {
+  background: #eef3ff;
+  border: 1px dashed #c7d6ff;
+}
+
+.upload-content {
+  text-align: center;
+  color: #444;
+}
+
+.upload-content svg {
+  width: 44px;
+  height: 44px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  fill: #555;
+}
+
+.upload-text {
+  font-size: clamp(14px, 3vw, 16px);
+  font-weight: 500;
+}
+
+/* hide real input */
+.upload-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
   </style>
 </head>
 
@@ -439,11 +485,36 @@
           <textarea name="reasonForRemoval"></textarea>
         </div>
 
-        <!-- FILE ATTACHMENTS -->
+        <!-- FILE ATTACHMENTS
         <div class="row">
           <label>Attach Files (Optional)</label>
           <input id="fileAttachment" type="file" multiple style="padding: 6px;" />
+        </div> -->
+
+        <div class="row">
+            <label>Attach Files (Optional)</label>
+
+            <label class="upload-box">
+                <input
+                id="fileAttachment"
+                class="upload-input"
+                type="file"
+                multiple
+                />
+
+                <div class="upload-content">
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 20h14a1 1 0 0 0 1-1v-4h-2v3H6v-3H4v4a1 1 0 0 0 1 1z"/>
+                    <path d="M11 16h2V8h3l-4-4-4 4h3z"/>
+                </svg>
+
+                <div class="upload-text">
+                    Upload files and document
+                </div>
+                </div>
+            </label>
         </div>
+
 
         <!-- TERMS -->
         <div class="terms">
