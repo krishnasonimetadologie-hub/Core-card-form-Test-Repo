@@ -250,7 +250,6 @@
       height: auto;
       cursor: pointer;
       border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
 
     .modal-title {
@@ -1361,42 +1360,42 @@ uploadBox.addEventListener('drop', (e) => {
       const modal = document.getElementById('modal');
       const modalContent = modal.querySelector('.modal-content');
 
-      if (type === 'success') {
-        // Replace entire modal content with just the image
-        modalContent.className = 'modal-content image-only';
-        modalContent.innerHTML = '<img src="assets/FormSubmittedSuccessfully.png" class="modal-full-image" alt="Success" onclick="closeModal()" />';
-      } else if (type === 'crs-not-found') {
-        // Replace entire modal content with just the image
-        modalContent.className = 'modal-content image-only';
-        modalContent.innerHTML = '<img src="assets/CRSOrderNotFound.png" class="modal-full-image" alt="Order Not Found" onclick="closeModal()" />';
-      } else {
-        // For other error types, use the standard modal layout
-        modalContent.className = 'modal-content';
-        const modalIcon = document.getElementById('modalIcon');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
+      // Always use standard modal layout
+      modalContent.className = 'modal-content';
 
-        // Reset to standard layout if it was changed
-        if (!modalIcon) {
-          modalContent.innerHTML = `
-            <div id="modalIcon" class="modal-icon"></div>
-            <div id="modalTitle" class="modal-title"></div>
-            <div id="modalMessage" class="modal-message"></div>
-            <button class="modal-btn" onclick="closeModal()">OK</button>
-          `;
-        }
+      const modalIcon = document.getElementById('modalIcon');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMessage = document.getElementById('modalMessage');
 
-        const icon = document.getElementById('modalIcon');
-        const titleEl = document.getElementById('modalTitle');
-        const messageEl = document.getElementById('modalMessage');
-
-        icon.innerHTML = '✕';
-        icon.className = 'modal-icon error';
-        titleEl.textContent = title;
-        messageEl.textContent = message;
+      // Reset to standard layout if it was changed
+      if (!modalIcon) {
+        modalContent.innerHTML = `
+          <div id="modalIcon" class="modal-icon"></div>
+          <div id="modalTitle" class="modal-title"></div>
+          <div id="modalMessage" class="modal-message"></div>
+          <button class="modal-btn" onclick="closeModal()">OK</button>
+        `;
       }
 
+      const icon = document.getElementById('modalIcon');
+      const titleEl = document.getElementById('modalTitle');
+      const messageEl = document.getElementById('modalMessage');
+
+      if (type === 'success') {
+        icon.innerHTML = '<img src="assets/Success.png" class="modal-image" alt="Success" />';
+        icon.className = '';
+      } else if (type === 'crs-not-found') {
+        icon.innerHTML = '<img src="assets/NotFound.png" class="modal-image" alt="Not Found" />';
+        icon.className = '';
+      } else {
+        icon.innerHTML = '✕';
+        icon.className = 'modal-icon error';
+      }
+
+      titleEl.textContent = title;
+      messageEl.textContent = message;
       modal.className = 'modal-overlay show';
+
       window.modalOnClose = onClose;
     }
 
@@ -1802,7 +1801,7 @@ uploadBox.addEventListener('drop', (e) => {
 
         if (!verificationResult.salesOrderExists) {
           hideLoading();
-          showModal('crs-not-found', 'Sales Order Not Found', 'Mentioned Sales Order number does not exist with Us');
+          showModal('crs-not-found', 'CRS Order Not found', 'Sales Order number entered does not match as records.');
           submitBtn.disabled = false;
           return;
         }
@@ -1899,7 +1898,7 @@ uploadBox.addEventListener('drop', (e) => {
         // Show complete state briefly before hiding
         setTimeout(() => {
           hideLoading();
-          showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
+          showModal('success', 'Form Successfully Submitted', '', function() {
             window.location.href = "https://crsjetspares.com";
           });
         }, 500);
