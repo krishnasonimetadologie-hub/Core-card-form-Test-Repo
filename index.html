@@ -206,6 +206,14 @@
       animation: modalSlideIn 0.3s ease-out;
     }
 
+    .modal-content.image-only {
+      background: transparent;
+      padding: 0;
+      max-width: none;
+      width: auto;
+      box-shadow: none;
+    }
+
     @keyframes modalSlideIn {
       from {
         transform: translateY(-50px);
@@ -234,6 +242,15 @@
       max-width: 100%;
       height: auto;
       margin-bottom: 16px;
+    }
+
+    .modal-full-image {
+      max-width: 90%;
+      width: auto;
+      height: auto;
+      cursor: pointer;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
 
     .modal-title {
@@ -1342,25 +1359,44 @@ uploadBox.addEventListener('drop', (e) => {
     // Modal Functions
     function showModal(type, title, message, onClose) {
       const modal = document.getElementById('modal');
-      const modalIcon = document.getElementById('modalIcon');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalMessage = document.getElementById('modalMessage');
+      const modalContent = modal.querySelector('.modal-content');
 
       if (type === 'success') {
-        modalIcon.innerHTML = '<img src="assets/FormSubmittedSuccessfully.png" class="modal-image" alt="Success" />';
-        modalIcon.className = '';
+        // Replace entire modal content with just the image
+        modalContent.className = 'modal-content image-only';
+        modalContent.innerHTML = '<img src="assets/FormSubmittedSuccessfully.png" class="modal-full-image" alt="Success" onclick="closeModal()" />';
       } else if (type === 'crs-not-found') {
-        modalIcon.innerHTML = '<img src="assets/CRSOrderNotFound.png" class="modal-image" alt="Order Not Found" />';
-        modalIcon.className = '';
+        // Replace entire modal content with just the image
+        modalContent.className = 'modal-content image-only';
+        modalContent.innerHTML = '<img src="assets/CRSOrderNotFound.png" class="modal-full-image" alt="Order Not Found" onclick="closeModal()" />';
       } else {
-        modalIcon.innerHTML = '✕';
-        modalIcon.className = 'modal-icon error';
+        // For other error types, use the standard modal layout
+        modalContent.className = 'modal-content';
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+
+        // Reset to standard layout if it was changed
+        if (!modalIcon) {
+          modalContent.innerHTML = `
+            <div id="modalIcon" class="modal-icon"></div>
+            <div id="modalTitle" class="modal-title"></div>
+            <div id="modalMessage" class="modal-message"></div>
+            <button class="modal-btn" onclick="closeModal()">OK</button>
+          `;
+        }
+
+        const icon = document.getElementById('modalIcon');
+        const titleEl = document.getElementById('modalTitle');
+        const messageEl = document.getElementById('modalMessage');
+
+        icon.innerHTML = '✕';
+        icon.className = 'modal-icon error';
+        titleEl.textContent = title;
+        messageEl.textContent = message;
       }
 
-      modalTitle.textContent = title;
-      modalMessage.textContent = message;
       modal.className = 'modal-overlay show';
-
       window.modalOnClose = onClose;
     }
 
