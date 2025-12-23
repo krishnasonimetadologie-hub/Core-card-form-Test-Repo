@@ -849,7 +849,7 @@
               <div class="upload-text">
                 Click to upload files
               </div>
-              <div class="upload-subtext" style="font-size: 12px; color: #666; margin-top: 5px;">
+              <div class="upload-subtext" id="uploadSubtext" style="font-size: 12px; color: #666; margin-top: 5px;">
                 Max 33 files, 5MB each
               </div>
             </div>
@@ -911,9 +911,11 @@
   </div>
 
   <script>
-    // File validation constants
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    // File validation constants (will be updated from metadata)
+let MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes (default)
 const MAX_FILE_COUNT = 33;
+let ALLOWED_FILE_FORMATS = []; // Will be populated from metadata
+let fileSettingsLoaded = false;
 
 // Function to format file size
 function formatFileSize(bytes) {
@@ -952,38 +954,66 @@ function getFileIcon(filename) {
   return icons[ext] || '📎';
 }
 
+// Function to get file extension
+function getFileExtension(filename) {
+  return filename.split('.').pop().toLowerCase();
+}
+
 // Function to validate files
 function validateFiles(files) {
   const validation = {
     valid: true,
     errors: [],
     oversizedFiles: [],
+    invalidFormatFiles: [],
     totalSize: 0,
     validFiles: []
   };
-  
+
   // Check file count
   if (files.length > MAX_FILE_COUNT) {
     validation.valid = false;
     validation.errors.push(`Maximum ${MAX_FILE_COUNT} files allowed. You selected ${files.length} files.`);
   }
-  
+
   // Check each file
   Array.from(files).forEach((file, index) => {
+    let fileIsValid = true;
+
+    // Check file format if settings are loaded
+    if (fileSettingsLoaded && ALLOWED_FILE_FORMATS.length > 0) {
+      const fileExt = getFileExtension(file.name);
+      if (!ALLOWED_FILE_FORMATS.includes(fileExt)) {
+        validation.valid = false;
+        fileIsValid = false;
+        validation.invalidFormatFiles.push({
+          name: file.name,
+          extension: fileExt,
+          index: index
+        });
+        validation.errors.push(`"${file.name}" has invalid format. Allowed formats: ${ALLOWED_FILE_FORMATS.join(', ')}`);
+      }
+    }
+
+    // Check file size
     if (file.size > MAX_FILE_SIZE) {
       validation.valid = false;
+      fileIsValid = false;
       validation.oversizedFiles.push({
         name: file.name,
         size: file.size,
         index: index
       });
-      validation.errors.push(`"${file.name}" exceeds 5MB limit (${formatFileSize(file.size)})`);
-    } else {
+      validation.errors.push(`"${file.name}" exceeds ${formatFileSize(MAX_FILE_SIZE)} limit (${formatFileSize(file.size)})`);
+    }
+
+    // Add to valid files only if both checks passed
+    if (fileIsValid) {
       validation.validFiles.push(file);
       validation.totalSize += file.size;
     }
   });
-  
+
   return validation;
 }
 
@@ -1030,16 +1060,17 @@ function displaySelectedFiles() {
       
       // If no valid files remain, reset
       if (fileInput.files.length === 0) {
+        const maxSizeMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
         uploadContent.innerHTML = `
           <svg viewBox="0 0 24 24">
             <path d="M5 20h14a1 1 0 0 0 1-1v-4h-2v3H6v-3H4v4a1 1 0 0 0 1 1z"/>
             <path d="M11 16h2V8h3l-4-4-4 4h3z"/>
           </svg>
           <div class="upload-text">
-            Upload files and document
+            Click to upload files
           </div>
           <div class="upload-subtext" style="font-size: 12px; color: #666; margin-top: 5px;">
-            Max 33 files, 5MB each
+            Max 33 files, ${maxSizeMB}MB each
           </div>
         `;
         fileListContainer.style.display = 'none';
@@ -1068,15 +1099,25 @@ function displaySelectedFiles() {
     
     Array.from(fileInput.files).forEach((file, index) => {
       const isOversized = file.size > MAX_FILE_SIZE;
+      const fileExt = getFileExtension(file.name);
+      const isInvalidFormat = fileSettingsLoaded && ALLOWED_FILE_FORMATS.length > 0 && !ALLOWED_FILE_FORMATS.includes(fileExt);
+      const hasError = isOversized || isInvalidFormat;
       totalSize += file.size;
-      
+
+      let errorMessage = '';
+      if (isOversized) {
+        errorMessage = ' (Too large!)';
+      } else if (isInvalidFormat) {
+        errorMessage = ' (Invalid format!)';
+      }
+
       const fileItem = document.createElement('div');
-      fileItem.className = `file-item ${isOversized ? 'error' : ''}`;
+      fileItem.className = `file-item ${hasError ? 'error' : ''}`;
       fileItem.innerHTML = `
         <div class="file-info">
-          <span class="file-icon ${isOversized ? 'error' : ''}">${getFileIcon(file.name)}</span>
-          <span class="file-name ${isOversized ? 'error' : ''}" title="${file.name}">${file.name}</span>
-          <span class="file-size ${isOversized ? 'error' : ''}">${formatFileSize(file.size)}${isOversized ? ' (Too large!)' : ''}</span>
+          <span class="file-icon ${hasError ? 'error' : ''}">${getFileIcon(file.name)}</span>
+          <span class="file-name ${hasError ? 'error' : ''}" title="${file.name}">${file.name}</span>
+          <span class="file-size ${hasError ? 'error' : ''}">${formatFileSize(file.size)}${errorMessage}</span>
         </div>
         <button type="button" class="remove-file" data-index="${index}">×</button>
       `;
@@ -1105,16 +1146,17 @@ function displaySelectedFiles() {
     
   } else {
     // Reset upload box to default
+    const maxSizeMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
     uploadContent.innerHTML = `
       <svg viewBox="0 0 24 24">
         <path d="M5 20h14a1 1 0 0 0 1-1v-4h-2v3H6v-3H4v4a1 1 0 0 0 1 1z"/>
         <path d="M11 16h2V8h3l-4-4-4 4h3z"/>
       </svg>
       <div class="upload-text">
-        Upload files and document
+        Click to upload files
       </div>
       <div class="upload-subtext" style="font-size: 12px; color: #666; margin-top: 5px;">
-        Max 33 files, 5MB each
+        Max 33 files, ${maxSizeMB}MB each
       </div>
     `;
     fileListContainer.style.display = 'none';
@@ -1385,6 +1427,107 @@ uploadBox.addEventListener('drop', (e) => {
       const data = await response.json();
       return data.access_token;
     }
+
+    async function fetchFileSettings() {
+      try {
+        const accessToken = await getAccessToken();
+
+        // Query custom metadata for CoreCardSetting
+        const query = "SELECT File_Formats__c, Maximum_Size__c FROM FilesAttachmentSettings__mdt WHERE DeveloperName='CoreCardSetting' LIMIT 1";
+        const url = SF_INSTANCE + '/services/data/v62.0/query?q=' + encodeURIComponent(query);
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          console.error('Failed to fetch file settings from metadata');
+          return false;
+        }
+
+        const data = await response.json();
+
+        if (data.records && data.records.length > 0) {
+          const settings = data.records[0];
+
+          // Parse file formats (comma-separated)
+          if (settings.File_Formats__c) {
+            ALLOWED_FILE_FORMATS = settings.File_Formats__c
+              .split(',')
+              .map(format => format.trim().toLowerCase())
+              .filter(format => format.length > 0);
+          }
+
+          // Parse maximum size (in MB)
+          if (settings.Maximum_Size__c) {
+            MAX_FILE_SIZE = parseFloat(settings.Maximum_Size__c) * 1024 * 1024; // Convert MB to bytes
+          }
+
+          fileSettingsLoaded = true;
+
+          // Update the UI label with allowed formats
+          updateFileLabel();
+
+          // Update the file input accept attribute
+          updateFileInputAccept();
+
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        console.error('Error fetching file settings:', error);
+        return false;
+      }
+    }
+
+    function updateFileLabel() {
+      const label = document.querySelector('label[for="fileAttachment"]');
+      if (!label) {
+        // Find the label by looking for the one before the upload box
+        const labels = document.querySelectorAll('.row label');
+        for (let i = 0; i < labels.length; i++) {
+          if (labels[i].textContent.includes('Attach Files')) {
+            updateLabelText(labels[i]);
+            return;
+          }
+        }
+      } else {
+        updateLabelText(label);
+      }
+    }
+
+    function updateLabelText(label) {
+      if (ALLOWED_FILE_FORMATS.length > 0) {
+        const maxSizeMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
+        const formatsText = ALLOWED_FILE_FORMATS.join(', ').toUpperCase();
+        label.innerHTML = `Attach Files (Optional) <span style="color: #666; font-weight: 400; font-size: 11px;">(Allowed formats: ${formatsText}, Max ${maxSizeMB}MB each)</span>`;
+      }
+    }
+
+    function updateFileInputAccept() {
+      const fileInput = document.getElementById('fileAttachment');
+      if (fileInput && ALLOWED_FILE_FORMATS.length > 0) {
+        // Create accept attribute with dot prefix for each format
+        fileInput.setAttribute('accept', ALLOWED_FILE_FORMATS.map(format => '.' + format).join(','));
+      }
+
+      // Update the upload subtext
+      const uploadSubtext = document.getElementById('uploadSubtext');
+      if (uploadSubtext && ALLOWED_FILE_FORMATS.length > 0) {
+        const maxSizeMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
+        uploadSubtext.textContent = `Max 33 files, ${maxSizeMB}MB each`;
+      }
+    }
+
+    // Initialize file settings on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchFileSettings();
+    });
 
     async function verifySalesOrder(salesOrderNumber, accessToken) {
       const url = API_ENDPOINT + '?salesOrderNumber=' + encodeURIComponent(salesOrderNumber);
