@@ -850,7 +850,7 @@
                 Click to upload files
               </div>
               <div class="upload-subtext" id="uploadSubtext" style="font-size: 12px; color: #666; margin-top: 5px;">
-                Max 33 files, 5MB each
+                Max 33 files, total size: 5MB
               </div>
             </div>
           </label>
@@ -964,7 +964,6 @@ function validateFiles(files) {
   const validation = {
     valid: true,
     errors: [],
-    oversizedFiles: [],
     invalidFormatFiles: [],
     totalSize: 0,
     validFiles: []
@@ -976,7 +975,7 @@ function validateFiles(files) {
     validation.errors.push(`Maximum ${MAX_FILE_COUNT} files allowed. You selected ${files.length} files.`);
   }
 
-  // Check each file
+  // Check each file for format and calculate total size
   Array.from(files).forEach((file, index) => {
     let fileIsValid = true;
 
@@ -995,24 +994,18 @@ function validateFiles(files) {
       }
     }
 
-    // Check file size
-    if (file.size > MAX_FILE_SIZE) {
-      validation.valid = false;
-      fileIsValid = false;
-      validation.oversizedFiles.push({
-        name: file.name,
-        size: file.size,
-        index: index
-      });
-      validation.errors.push(`"${file.name}" exceeds ${formatFileSize(MAX_FILE_SIZE)} limit (${formatFileSize(file.size)})`);
-    }
-
-    // Add to valid files only if both checks passed
+    // Add to valid files and calculate total size
     if (fileIsValid) {
       validation.validFiles.push(file);
       validation.totalSize += file.size;
     }
   });
+
+  // Check total size of all files combined
+  if (fileSettingsLoaded && validation.totalSize > MAX_FILE_SIZE) {
+    validation.valid = false;
+    validation.errors.push(`Total file size (${formatFileSize(validation.totalSize)}) exceeds maximum allowed (${formatFileSize(MAX_FILE_SIZE)})`);
+  }
 
   return validation;
 }
@@ -1070,7 +1063,7 @@ function displaySelectedFiles() {
             Click to upload files
           </div>
           <div class="upload-subtext" style="font-size: 12px; color: #666; margin-top: 5px;">
-            Max 33 files, ${maxSizeMB}MB each
+            Max 33 files, total size: ${maxSizeMB}MB
           </div>
         `;
         fileListContainer.style.display = 'none';
@@ -1098,26 +1091,22 @@ function displaySelectedFiles() {
     let totalSize = 0;
     
     Array.from(fileInput.files).forEach((file, index) => {
-      const isOversized = file.size > MAX_FILE_SIZE;
       const fileExt = getFileExtension(file.name);
       const isInvalidFormat = fileSettingsLoaded && ALLOWED_FILE_FORMATS.length > 0 && !ALLOWED_FILE_FORMATS.includes(fileExt);
-      const hasError = isOversized || isInvalidFormat;
       totalSize += file.size;
 
       let errorMessage = '';
-      if (isOversized) {
-        errorMessage = ' (Too large!)';
-      } else if (isInvalidFormat) {
+      if (isInvalidFormat) {
         errorMessage = ' (Invalid format!)';
       }
 
       const fileItem = document.createElement('div');
-      fileItem.className = `file-item ${hasError ? 'error' : ''}`;
+      fileItem.className = `file-item ${isInvalidFormat ? 'error' : ''}`;
       fileItem.innerHTML = `
         <div class="file-info">
-          <span class="file-icon ${hasError ? 'error' : ''}">${getFileIcon(file.name)}</span>
-          <span class="file-name ${hasError ? 'error' : ''}" title="${file.name}">${file.name}</span>
-          <span class="file-size ${hasError ? 'error' : ''}">${formatFileSize(file.size)}${errorMessage}</span>
+          <span class="file-icon ${isInvalidFormat ? 'error' : ''}">${getFileIcon(file.name)}</span>
+          <span class="file-name ${isInvalidFormat ? 'error' : ''}" title="${file.name}">${file.name}</span>
+          <span class="file-size ${isInvalidFormat ? 'error' : ''}">${formatFileSize(file.size)}${errorMessage}</span>
         </div>
         <button type="button" class="remove-file" data-index="${index}">×</button>
       `;
@@ -1127,9 +1116,13 @@ function displaySelectedFiles() {
     // Add summary
     const summaryDiv = document.createElement('div');
     summaryDiv.className = 'file-summary';
+    const totalSizeExceeded = fileSettingsLoaded && totalSize > MAX_FILE_SIZE;
     summaryDiv.innerHTML = `
       <div class="total-count">${fileInput.files.length} of ${MAX_FILE_COUNT} files</div>
-      <div class="total-size">Total: ${formatFileSize(totalSize)}</div>
+      <div class="total-size" style="${totalSizeExceeded ? 'color: #dc3545; font-weight: 700;' : ''}">
+        Total: ${formatFileSize(totalSize)}${totalSizeExceeded ? ' (Exceeds limit!)' : ''}
+        ${fileSettingsLoaded ? ' / ' + formatFileSize(MAX_FILE_SIZE) : ''}
+      </div>
     `;
     selectedFilesDiv.appendChild(summaryDiv);
     
@@ -1156,7 +1149,7 @@ function displaySelectedFiles() {
         Click to upload files
       </div>
       <div class="upload-subtext" style="font-size: 12px; color: #666; margin-top: 5px;">
-        Max 33 files, ${maxSizeMB}MB each
+        Max 33 files, total size: ${maxSizeMB}MB
       </div>
     `;
     fileListContainer.style.display = 'none';
@@ -1323,9 +1316,15 @@ uploadBox.addEventListener('drop', (e) => {
   // Add valid files
   validation.validFiles.forEach(file => dataTransfer.items.add(file));
 
-  // Show errors for oversized files
-  if (validation.oversizedFiles.length > 0) {
-    showFileValidationError(`${validation.oversizedFiles.length} file(s) exceed 5MB limit and were not added.`);
+  // Show errors for invalid format files
+  if (validation.invalidFormatFiles && validation.invalidFormatFiles.length > 0) {
+    showFileValidationError(`${validation.invalidFormatFiles.length} file(s) have invalid format and were not added.`);
+  }
+
+  // Check if total size exceeds limit
+  const totalSize = Array.from(dataTransfer.files).reduce((sum, file) => sum + file.size, 0);
+  if (fileSettingsLoaded && totalSize > MAX_FILE_SIZE) {
+    showFileValidationError(`Total file size (${formatFileSize(totalSize)}) exceeds maximum allowed (${formatFileSize(MAX_FILE_SIZE)})`);
   }
 
   fileInput.files = dataTransfer.files;
@@ -1505,7 +1504,7 @@ uploadBox.addEventListener('drop', (e) => {
       if (ALLOWED_FILE_FORMATS.length > 0) {
         const maxSizeMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
         const formatsText = ALLOWED_FILE_FORMATS.join(', ').toUpperCase();
-        label.innerHTML = `Attach Files (Optional) <span style="color: #666; font-weight: 400; font-size: 11px;">(Allowed formats: ${formatsText}, Max ${maxSizeMB}MB each)</span>`;
+        label.innerHTML = `Attach Files (Optional) <span style="color: #666; font-weight: 400; font-size: 11px;">(Allowed formats: ${formatsText}, Max total size: ${maxSizeMB}MB)</span>`;
       }
     }
 
@@ -1520,7 +1519,7 @@ uploadBox.addEventListener('drop', (e) => {
       const uploadSubtext = document.getElementById('uploadSubtext');
       if (uploadSubtext && ALLOWED_FILE_FORMATS.length > 0) {
         const maxSizeMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
-        uploadSubtext.textContent = `Max 33 files, ${maxSizeMB}MB each`;
+        uploadSubtext.textContent = `Max 33 files, total size: ${maxSizeMB}MB`;
       }
     }
 
