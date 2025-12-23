@@ -230,6 +230,12 @@
       color: #dc3545;
     }
 
+    .modal-image {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 16px;
+    }
+
     .modal-title {
       font-size: clamp(18px, 4vw, 22px);
       font-weight: 600;
@@ -289,25 +295,10 @@
       background: #ffffff;
       border-radius: 12px;
       padding: 32px 36px;
-      max-width: 400px;
+      max-width: 500px;
       width: 90%;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       text-align: center;
-    }
-
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      margin: 0 auto 20px;
-      border: 4px solid #e3f2fd;
-      border-top: 4px solid #2f5fa7;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
 
     .loading-text {
@@ -317,26 +308,22 @@
       margin-bottom: 20px;
     }
 
-    .progress-container {
-      width: 100%;
-      height: 8px;
-      background: #e3f2fd;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 12px;
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
     }
 
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #2f5fa7, #4a7bc8);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-      box-shadow: 0 0 10px rgba(47, 95, 167, 0.5);
+    .progress-step-image {
+      max-height: 50px;
+      width: auto;
     }
 
-    .progress-label {
-      font-size: clamp(11px, 2.6vw, 13px);
-      color: #666;
+    .progress-separator {
+      max-height: 20px;
+      width: auto;
+      margin: 0 10px;
     }
 
     /* ===== ATTACHMENT UPLOAD (DESIGN ONLY) ===== */
@@ -804,23 +791,23 @@
 
         <!-- AIRCRAFT DETAILS -->
         <div class="row">
-          <label>Aircraft Type *</label>
+          <label>Aircraft Type <span style="color:red">*</span></label>
           <input name="aircraftType" type="text" />
         </div>
 
         <div class="row">
-          <label>Aircraft Serial Number *</label>
+          <label>Aircraft Serial Number <span style="color:red">*</span></label>
           <input name="aircraftSerial" type="text" />
         </div>
 
         <div class="row">
-          <label>Aircraft Tail Number *</label>
+          <label>Aircraft Tail Number <span style="color:red">*</span></label>
           <input name="aircraftTail" type="text" />
         </div>
 
         <!-- REASON FOR REMOVAL -->
         <div class="row">
-          <label>Reason For Removal *</label>
+          <label>Reason For Removal <span style="color:red">*</span></label>
           <textarea name="reasonForRemoval"></textarea>
         </div>
 
@@ -892,12 +879,12 @@
   <!-- Loading Modal -->
   <div id="loadingModal" class="loading-overlay">
     <div class="loading-content">
-      <div class="loading-spinner"></div>
       <div id="loadingText" class="loading-text">Processing...</div>
-      <div class="progress-container">
-        <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+      <div class="progress-steps">
+        <img id="verifyingIcon" src="assets/VerifyingSalesOrder.png" class="progress-step-image" alt="Verifying" />
+        <img id="separator" src="assets/SeparatorGrey.png" class="progress-separator" alt="Separator" />
+        <img id="preparingIcon" src="assets/PreparingSubmissionGrey.png" class="progress-step-image" alt="Preparing" />
       </div>
-      <div id="progressLabel" class="progress-label">0%</div>
     </div>
   </div>
 
@@ -1360,8 +1347,11 @@ uploadBox.addEventListener('drop', (e) => {
       const modalMessage = document.getElementById('modalMessage');
 
       if (type === 'success') {
-        modalIcon.innerHTML = '✓';
-        modalIcon.className = 'modal-icon success';
+        modalIcon.innerHTML = '<img src="assets/FormSubmittedSuccessfully.png" class="modal-image" alt="Success" />';
+        modalIcon.className = '';
+      } else if (type === 'crs-not-found') {
+        modalIcon.innerHTML = '<img src="assets/CRSOrderNotFound.png" class="modal-image" alt="Order Not Found" />';
+        modalIcon.className = '';
       } else {
         modalIcon.innerHTML = '✕';
         modalIcon.className = 'modal-icon error';
@@ -1385,26 +1375,49 @@ uploadBox.addEventListener('drop', (e) => {
     }
 
     // Loading Modal Functions
-    function showLoading(text, progress) {
+    function showLoading(text, stage) {
       const loadingModal = document.getElementById('loadingModal');
       const loadingText = document.getElementById('loadingText');
-      const progressBar = document.getElementById('progressBar');
-      const progressLabel = document.getElementById('progressLabel');
+      const verifyingIcon = document.getElementById('verifyingIcon');
+      const separator = document.getElementById('separator');
+      const preparingIcon = document.getElementById('preparingIcon');
 
       loadingText.textContent = text;
-      progressBar.style.width = progress + '%';
-      progressLabel.textContent = progress + '%';
+
+      // Reset to initial state
+      verifyingIcon.src = 'assets/VerifyingSalesOrder.png';
+      separator.src = 'assets/SeparatorGrey.png';
+      preparingIcon.src = 'assets/PreparingSubmissionGrey.png';
+
       loadingModal.className = 'loading-overlay show';
     }
 
-    function updateLoading(text, progress) {
+    function updateLoading(text, stage) {
       const loadingText = document.getElementById('loadingText');
-      const progressBar = document.getElementById('progressBar');
-      const progressLabel = document.getElementById('progressLabel');
+      const verifyingIcon = document.getElementById('verifyingIcon');
+      const separator = document.getElementById('separator');
+      const preparingIcon = document.getElementById('preparingIcon');
 
       loadingText.textContent = text;
-      progressBar.style.width = progress + '%';
-      progressLabel.textContent = progress + '%';
+
+      // Update icons based on stage
+      if (stage === 'verifying') {
+        verifyingIcon.src = 'assets/VerifyingSalesOrder.png';
+        separator.src = 'assets/SeparatorGrey.png';
+        preparingIcon.src = 'assets/PreparingSubmissionGrey.png';
+      } else if (stage === 'verified') {
+        verifyingIcon.src = 'assets/VerifyingSalesOrder.png';
+        separator.src = 'assets/SeparatorBlue.png';
+        preparingIcon.src = 'assets/PreparingSubmissionGrey.png';
+      } else if (stage === 'preparing') {
+        verifyingIcon.src = 'assets/VerifyingSalesOrder.png';
+        separator.src = 'assets/SeparatorBlue.png';
+        preparingIcon.src = 'assets/PreparingSubmissionGrey.png';
+      } else if (stage === 'complete') {
+        verifyingIcon.src = 'assets/VerifyingSalesOrder.png';
+        separator.src = 'assets/SeparatorBlue.png';
+        preparingIcon.src = 'assets/PreparingSubmission.png';
+      }
     }
 
     function hideLoading() {
@@ -1678,8 +1691,54 @@ uploadBox.addEventListener('drop', (e) => {
       const submitBtn = document.querySelector(".submit-btn");
       const fileInput = document.getElementById("fileAttachment");
 
+      // Validate all required fields
       if (!subject.value.trim()) {
         showModal('error', 'Required Field', 'Please enter the Sales Order Number.');
+        return;
+      }
+
+      if (!form.querySelector('[name="customerPo"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Customer PO Number.');
+        return;
+      }
+
+      if (!form.querySelector('[name="customerName"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Name.');
+        return;
+      }
+
+      if (!form.querySelector('[name="company"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Company Name.');
+        return;
+      }
+
+      if (!form.querySelector('[name="partNumber"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Part Number.');
+        return;
+      }
+
+      if (!form.querySelector('[name="serialNumber"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Serial Number.');
+        return;
+      }
+
+      if (!form.querySelector('[name="aircraftType"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Aircraft Type.');
+        return;
+      }
+
+      if (!form.querySelector('[name="aircraftSerial"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Aircraft Serial Number.');
+        return;
+      }
+
+      if (!form.querySelector('[name="aircraftTail"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Aircraft Tail Number.');
+        return;
+      }
+
+      if (!form.querySelector('[name="reasonForRemoval"]').value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Reason For Removal.');
         return;
       }
 
@@ -1697,22 +1756,22 @@ uploadBox.addEventListener('drop', (e) => {
       }
 
       submitBtn.disabled = true;
-      showLoading('Authenticating...', 0);
+      showLoading('Verifying Sales Order...', 'verifying');
 
       try {
         const accessToken = await getAccessToken();
-        updateLoading('Verifying Sales Order...', 20);
+        updateLoading('Verifying Sales Order...', 'verifying');
 
         const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
 
         if (!verificationResult.salesOrderExists) {
           hideLoading();
-          showModal('error', 'Sales Order Not Found', 'Mentioned Sales Order number does not exist with Us');
+          showModal('crs-not-found', 'Sales Order Not Found', 'Mentioned Sales Order number does not exist with Us');
           submitBtn.disabled = false;
           return;
         }
 
-        updateLoading('Sales Order Verified', 40);
+        updateLoading('Sales Order Verified', 'verified');
 
         // Prepare form data
         const formData = {
@@ -1733,19 +1792,18 @@ uploadBox.addEventListener('drop', (e) => {
           customerPo: form.querySelector('[name="customerPo"]').value
         };
 
-        updateLoading('Preparing Submission...', 50);
+        updateLoading('Preparing Submission...', 'preparing');
         const recordTypeId = await getRecordTypeId(accessToken);
         formData.recordTypeId = recordTypeId;
 
         if (fileInput.files.length > 0) {
-          updateLoading('Reading Files...', 60);
+          updateLoading('Reading Files...', 'preparing');
 
           const totalFiles = fileInput.files.length;
           const fileDataArray = [];
 
           for (let i = 0; i < totalFiles; i++) {
-            const fileProgress = 60 + (30 * ((i + 1) / totalFiles));
-            updateLoading(`Reading Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
+            updateLoading(`Reading Files... (${i + 1}/${totalFiles})`, 'preparing');
 
             // Read file as base64
             const file = fileInput.files[i];
@@ -1768,11 +1826,11 @@ uploadBox.addEventListener('drop', (e) => {
             fileDataArray.push(fileData);
           }
 
-          updateLoading('Files Ready', 90);
-          updateLoading('Creating Case in Salesforce...', 92);
+          updateLoading('Files Ready', 'preparing');
+          updateLoading('Creating Case in Salesforce...', 'preparing');
           const caseId = await createCase(formData, accessToken);
 
-          updateLoading('Uploading Files...', 94);
+          updateLoading('Uploading Files...', 'preparing');
           for (let i = 0; i < fileDataArray.length; i++) {
             const contentVersionData = {
               Title: fileDataArray[i].name,
@@ -1795,17 +1853,20 @@ uploadBox.addEventListener('drop', (e) => {
             }
           }
 
-          updateLoading('Submission Complete', 100);
+          updateLoading('Submission Complete', 'complete');
         } else {
-          updateLoading('Creating Case in Salesforce...', 95);
+          updateLoading('Creating Case in Salesforce...', 'preparing');
           const caseId = await createCase(formData, accessToken);
-          updateLoading('Submission Complete', 100);
+          updateLoading('Submission Complete', 'complete');
         }
 
-        hideLoading();
-        showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
-          window.location.href = "https://crsjetspares.com";
-        });
+        // Show complete state briefly before hiding
+        setTimeout(() => {
+          hideLoading();
+          showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
+            window.location.href = "https://crsjetspares.com";
+          });
+        }, 500);
 
       } catch (error) {
         console.error('Submission error:', error);
