@@ -1,3 +1,4 @@
+
 <!-- MT-7455 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -195,13 +196,14 @@
     }
 
     .modal-content {
-      background: transparent;
+      background: #ffffff;
       border-radius: 12px;
-      max-width: 480px;
+      padding: 28px 32px;
+      max-width: 420px;
       width: 90%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
       text-align: center;
       animation: modalSlideIn 0.3s ease-out;
-      position: relative;
     }
 
     @keyframes modalSlideIn {
@@ -216,73 +218,46 @@
     }
 
     .modal-icon {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 48px;
+      margin-bottom: 16px;
     }
 
     .modal-icon.success {
-      background: #22A447;
+      color: #28a745;
     }
 
     .modal-icon.error {
-      background: transparent;
-    }
-
-    .modal-icon svg {
-      width: 50px;
-      height: 50px;
+      color: #dc3545;
     }
 
     .modal-title {
-      font-size: clamp(16px, 3.5vw, 18px);
+      font-size: clamp(18px, 4vw, 22px);
       font-weight: 600;
       color: #0a2a43;
-      margin-bottom: 8px;
-    }
-
-    .modal-title.error {
-      color: #2F5FA7;
+      margin-bottom: 12px;
     }
 
     .modal-message {
-      font-size: clamp(13px, 3vw, 14px);
-      color: #666;
+      font-size: clamp(13px, 3vw, 15px);
+      color: #333;
       line-height: 1.5;
       margin-bottom: 24px;
     }
 
     .modal-btn {
-      background: #E8F0FE;
-      color: #2F5FA7;
-      padding: 10px 40px;
+      background: #2f5fa7;
+      color: #ffffff;
+      padding: 10px 32px;
       border-radius: 6px;
       border: none;
-      font-size: clamp(13px, 3vw, 14px);
+      font-size: clamp(13px, 3vw, 15px);
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
-      position: absolute;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
     }
 
     .modal-btn:hover {
-      background: #D4E4FC;
-    }
-
-    #modal .modal-content {
-      position: relative;
-    }
-
-    #modalImage {
-      display: block;
-      position: relative;
+      background: #264a85;
     }
 
     .help-text {
@@ -311,10 +286,57 @@
     }
 
     .loading-content {
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 32px 36px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 20px;
+      border: 4px solid #e3f2fd;
+      border-top: 4px solid #2f5fa7;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: clamp(14px, 3.2vw, 16px);
+      font-weight: 600;
+      color: #0a2a43;
+      margin-bottom: 20px;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background: #e3f2fd;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #2f5fa7, #4a7bc8);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(47, 95, 167, 0.5);
+    }
+
+    .progress-label {
+      font-size: clamp(11px, 2.6vw, 13px);
+      color: #666;
     }
 
     /* ===== ATTACHMENT UPLOAD (DESIGN ONLY) ===== */
@@ -782,23 +804,23 @@
 
         <!-- AIRCRAFT DETAILS -->
         <div class="row">
-          <label>Aircraft Type <span style="color:red">*</span></label>
+          <label>Aircraft Type *</label>
           <input name="aircraftType" type="text" />
         </div>
 
         <div class="row">
-          <label>Aircraft Serial Number <span style="color:red">*</span></label>
+          <label>Aircraft Serial Number *</label>
           <input name="aircraftSerial" type="text" />
         </div>
 
         <div class="row">
-          <label>Aircraft Tail Number <span style="color:red">*</span></label>
+          <label>Aircraft Tail Number *</label>
           <input name="aircraftTail" type="text" />
         </div>
 
         <!-- REASON FOR REMOVAL -->
         <div class="row">
-          <label>Reason For Removal <span style="color:red">*</span></label>
+          <label>Reason For Removal *</label>
           <textarea name="reasonForRemoval"></textarea>
         </div>
 
@@ -870,14 +892,21 @@
   <!-- Loading Modal -->
   <div id="loadingModal" class="loading-overlay">
     <div class="loading-content">
-      <img id="progressImage" src="assets/Frame 29.png" alt="Progress" style="max-width: 100%; height: auto;" />
+      <div class="loading-spinner"></div>
+      <div id="loadingText" class="loading-text">Processing...</div>
+      <div class="progress-container">
+        <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">0%</div>
     </div>
   </div>
 
   <!-- Modal Popup -->
   <div id="modal" class="modal-overlay">
     <div class="modal-content">
-      <img id="modalImage" src="" alt="" style="max-width: 450px; width: 100%; height: auto; display: none;" />
+      <div id="modalIcon" class="modal-icon"></div>
+      <div id="modalTitle" class="modal-title"></div>
+      <div id="modalMessage" class="modal-message"></div>
       <button class="modal-btn" onclick="closeModal()">OK</button>
     </div>
   </div>
@@ -1326,42 +1355,22 @@ uploadBox.addEventListener('drop', (e) => {
     // Modal Functions
     function showModal(type, title, message, onClose) {
       const modal = document.getElementById('modal');
-      const modalImage = document.getElementById('modalImage');
+      const modalIcon = document.getElementById('modalIcon');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMessage = document.getElementById('modalMessage');
 
       if (type === 'success') {
-        modalImage.src = 'assets/Frame 30.png';
-        modalImage.alt = 'Form successfully submitted';
-        modalImage.style.display = 'block';
-      } else if (type === 'error' && title === 'Sales Order Not Found') {
-        modalImage.src = 'assets/Frame 32.png';
-        modalImage.alt = 'CRS Order Not Found';
-        modalImage.style.display = 'block';
+        modalIcon.innerHTML = '✓';
+        modalIcon.className = 'modal-icon success';
       } else {
-        // For other errors, show a simple text modal
-        modalImage.style.display = 'none';
-        // Create temporary elements for title and message
-        const existingTitle = document.getElementById('tempModalTitle');
-        const existingMessage = document.getElementById('tempModalMessage');
-
-        if (existingTitle) existingTitle.remove();
-        if (existingMessage) existingMessage.remove();
-
-        const modalContent = document.querySelector('#modal .modal-content');
-        const tempTitle = document.createElement('div');
-        tempTitle.id = 'tempModalTitle';
-        tempTitle.className = 'modal-title';
-        tempTitle.textContent = title;
-
-        const tempMessage = document.createElement('div');
-        tempMessage.id = 'tempModalMessage';
-        tempMessage.className = 'modal-message';
-        tempMessage.textContent = message;
-
-        modalContent.insertBefore(tempMessage, modalContent.querySelector('.modal-btn'));
-        modalContent.insertBefore(tempTitle, tempMessage);
+        modalIcon.innerHTML = '✕';
+        modalIcon.className = 'modal-icon error';
       }
 
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
       modal.className = 'modal-overlay show';
+
       window.modalOnClose = onClose;
     }
 
@@ -1376,13 +1385,26 @@ uploadBox.addEventListener('drop', (e) => {
     }
 
     // Loading Modal Functions
-    function showLoading(step) {
+    function showLoading(text, progress) {
       const loadingModal = document.getElementById('loadingModal');
+      const loadingText = document.getElementById('loadingText');
+      const progressBar = document.getElementById('progressBar');
+      const progressLabel = document.getElementById('progressLabel');
+
+      loadingText.textContent = text;
+      progressBar.style.width = progress + '%';
+      progressLabel.textContent = progress + '%';
       loadingModal.className = 'loading-overlay show';
     }
 
-    function updateLoading(step) {
-      // Just keep showing the loading modal
+    function updateLoading(text, progress) {
+      const loadingText = document.getElementById('loadingText');
+      const progressBar = document.getElementById('progressBar');
+      const progressLabel = document.getElementById('progressLabel');
+
+      loadingText.textContent = text;
+      progressBar.style.width = progress + '%';
+      progressLabel.textContent = progress + '%';
     }
 
     function hideLoading() {
@@ -1656,25 +1678,9 @@ uploadBox.addEventListener('drop', (e) => {
       const submitBtn = document.querySelector(".submit-btn");
       const fileInput = document.getElementById("fileAttachment");
 
-      // Validate all required fields
-      const requiredFields = [
-        { name: 'subject', label: 'CRS SO-#', element: subject },
-        { name: 'customerPo', label: 'Customer PO-#', element: form.querySelector('[name="customerPo"]') },
-        { name: 'customerName', label: 'Name', element: form.querySelector('[name="customerName"]') },
-        { name: 'company', label: 'Company Name', element: form.querySelector('[name="company"]') },
-        { name: 'partNumber', label: 'Part Number', element: form.querySelector('[name="partNumber"]') },
-        { name: 'serialNumber', label: 'Serial Number', element: form.querySelector('[name="serialNumber"]') },
-        { name: 'aircraftType', label: 'Aircraft Type', element: form.querySelector('[name="aircraftType"]') },
-        { name: 'aircraftSerial', label: 'Aircraft Serial Number', element: form.querySelector('[name="aircraftSerial"]') },
-        { name: 'aircraftTail', label: 'Aircraft Tail Number', element: form.querySelector('[name="aircraftTail"]') },
-        { name: 'reasonForRemoval', label: 'Reason For Removal', element: form.querySelector('[name="reasonForRemoval"]') }
-      ];
-
-      for (const field of requiredFields) {
-        if (!field.element.value.trim()) {
-          showModal('error', 'Required Field', `Please enter ${field.label}.`);
-          return;
-        }
+      if (!subject.value.trim()) {
+        showModal('error', 'Required Field', 'Please enter the Sales Order Number.');
+        return;
       }
 
       const salesOrderNumber = extractSalesOrderNumber(subject.value);
@@ -1691,21 +1697,22 @@ uploadBox.addEventListener('drop', (e) => {
       }
 
       submitBtn.disabled = true;
-      showLoading(1); // Step 1: Verifying Sales Order
+      showLoading('Authenticating...', 0);
 
       try {
         const accessToken = await getAccessToken();
+        updateLoading('Verifying Sales Order...', 20);
 
         const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
 
         if (!verificationResult.salesOrderExists) {
           hideLoading();
-          showModal('error', 'Sales Order Not Found', 'Sales Order number entered does not match as records.');
+          showModal('error', 'Sales Order Not Found', 'Mentioned Sales Order number does not exist with Us');
           submitBtn.disabled = false;
           return;
         }
 
-        updateLoading(2); // Step 2: Preparing Submission
+        updateLoading('Sales Order Verified', 40);
 
         // Prepare form data
         const formData = {
@@ -1726,14 +1733,20 @@ uploadBox.addEventListener('drop', (e) => {
           customerPo: form.querySelector('[name="customerPo"]').value
         };
 
+        updateLoading('Preparing Submission...', 50);
         const recordTypeId = await getRecordTypeId(accessToken);
         formData.recordTypeId = recordTypeId;
 
         if (fileInput.files.length > 0) {
+          updateLoading('Reading Files...', 60);
+
           const totalFiles = fileInput.files.length;
           const fileDataArray = [];
 
           for (let i = 0; i < totalFiles; i++) {
+            const fileProgress = 60 + (30 * ((i + 1) / totalFiles));
+            updateLoading(`Reading Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
+
             // Read file as base64
             const file = fileInput.files[i];
             const fileData = await new Promise((resolve, reject) => {
@@ -1755,8 +1768,11 @@ uploadBox.addEventListener('drop', (e) => {
             fileDataArray.push(fileData);
           }
 
+          updateLoading('Files Ready', 90);
+          updateLoading('Creating Case in Salesforce...', 92);
           const caseId = await createCase(formData, accessToken);
 
+          updateLoading('Uploading Files...', 94);
           for (let i = 0; i < fileDataArray.length; i++) {
             const contentVersionData = {
               Title: fileDataArray[i].name,
@@ -1778,12 +1794,16 @@ uploadBox.addEventListener('drop', (e) => {
               throw new Error('Failed to upload file: ' + fileDataArray[i].name);
             }
           }
+
+          updateLoading('Submission Complete', 100);
         } else {
+          updateLoading('Creating Case in Salesforce...', 95);
           const caseId = await createCase(formData, accessToken);
+          updateLoading('Submission Complete', 100);
         }
 
         hideLoading();
-        showModal('success', 'Form successfully submitted.', '', function() {
+        showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
           window.location.href = "https://crsjetspares.com";
         });
 
