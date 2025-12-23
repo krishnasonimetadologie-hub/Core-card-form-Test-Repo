@@ -1180,20 +1180,51 @@ function removeFile(index) {
 // Function to validate files before form submission
 function validateFilesBeforeSubmit() {
   const fileInput = document.getElementById('fileAttachment');
-  
+
   if (fileInput.files.length === 0) {
     return { valid: true, message: '' };
   }
-  
-  const validation = validateFiles(fileInput.files);
-  
-  if (!validation.valid) {
-    return { 
-      valid: false, 
-      message: 'Please fix file upload errors before submitting. ' + validation.errors.join(', ')
+
+  // Calculate total size of all files
+  let totalSize = 0;
+  const invalidFormatFiles = [];
+
+  Array.from(fileInput.files).forEach((file) => {
+    totalSize += file.size;
+
+    // Check file format if settings are loaded
+    if (fileSettingsLoaded && ALLOWED_FILE_FORMATS.length > 0) {
+      const fileExt = getFileExtension(file.name);
+      if (!ALLOWED_FILE_FORMATS.includes(fileExt)) {
+        invalidFormatFiles.push(file.name);
+      }
+    }
+  });
+
+  // Check for invalid format files
+  if (invalidFormatFiles.length > 0) {
+    return {
+      valid: false,
+      message: `The following file(s) have invalid format: ${invalidFormatFiles.join(', ')}. Allowed formats: ${ALLOWED_FILE_FORMATS.join(', ').toUpperCase()}`
     };
   }
-  
+
+  // Check total size
+  if (fileSettingsLoaded && totalSize > MAX_FILE_SIZE) {
+    return {
+      valid: false,
+      message: `Total file size (${formatFileSize(totalSize)}) exceeds maximum allowed (${formatFileSize(MAX_FILE_SIZE)}). Please remove some files.`
+    };
+  }
+
+  // Check file count
+  if (fileInput.files.length > MAX_FILE_COUNT) {
+    return {
+      valid: false,
+      message: `Maximum ${MAX_FILE_COUNT} files allowed. You have ${fileInput.files.length} files.`
+    };
+  }
+
   return { valid: true, message: '' };
 }
 
@@ -1220,6 +1251,23 @@ document.getElementById('fileAttachment').addEventListener('change', function(e)
     return;
   }
 
+  // Validate all files (including format and total size)
+  const validation = validateFiles(allFiles);
+
+  // If validation fails, only keep valid files
+  if (!validation.valid) {
+    // Show errors
+    showFileValidationError(validation.errors.join(', '));
+
+    // Only add valid files
+    const dataTransfer = new DataTransfer();
+    validation.validFiles.forEach(file => dataTransfer.items.add(file));
+    fileInput.files = dataTransfer.files;
+    window.uploadedFiles = Array.from(dataTransfer.files);
+    displaySelectedFiles();
+    return;
+  }
+
   // Create a new DataTransfer to update the file input with all files
   const dataTransfer = new DataTransfer();
   allFiles.forEach(file => dataTransfer.items.add(file));
@@ -1229,48 +1277,6 @@ document.getElementById('fileAttachment').addEventListener('change', function(e)
   window.uploadedFiles = allFiles;
 
   displaySelectedFiles();
-});
-
-// Update form submission to include file validation
-document.querySelector("form").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  // Validate files before proceeding
-  const fileValidation = validateFilesBeforeSubmit();
-  if (!fileValidation.valid) {
-    showModal('error', 'File Upload Error', fileValidation.message);
-    return;
-  }
-
-  // Rest of your existing submission code...
-  const form = e.target;
-  const subject = document.getElementById("subject");
-  const submitBtn = document.querySelector(".submit-btn");
-  const fileInput = document.getElementById("fileAttachment");
-
-  if (!subject.value.trim()) {
-    showModal('error', 'Required Field', 'Please enter the Sales Order Number.');
-    return;
-  }
-
-  const salesOrderNumber = extractSalesOrderNumber(subject.value);
-  if (!salesOrderNumber) {
-    showModal('error', 'Invalid Format', 'Please enter a valid Sales Order Number in the format SO-XXXXX');
-    return;
-  }
-
-  // Continue with your existing submission logic...
-  submitBtn.disabled = true;
-  showLoading('Authenticating...', 0);
-
-  try {
-    // ... rest of your submission code
-  } catch (error) {
-    console.error('Submission error:', error);
-    hideLoading();
-    showModal('error', 'Submission Failed', 'An error occurred while submitting the form. Please try again.');
-    submitBtn.disabled = false;
-  }
 });
 
 // Optional: Add drag and drop functionality with validation
@@ -1679,6 +1685,13 @@ uploadBox.addEventListener('drop', (e) => {
       const salesOrderNumber = extractSalesOrderNumber(subject.value);
       if (!salesOrderNumber) {
         showModal('error', 'Invalid Format', 'Please enter a valid Sales Order Number in the format SO-XXXXX');
+        return;
+      }
+
+      // Validate files before proceeding
+      const fileValidation = validateFilesBeforeSubmit();
+      if (!fileValidation.valid) {
+        showModal('error', 'File Upload Error', fileValidation.message);
         return;
       }
 
