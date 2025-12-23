@@ -1125,15 +1125,18 @@ function displaySelectedFiles() {
 function removeFile(index) {
   const fileInput = document.getElementById('fileAttachment');
   const files = Array.from(fileInput.files);
-  
+
   if (index >= 0 && index < files.length) {
     files.splice(index, 1);
-    
+
     // Create a new DataTransfer to update the file input
     const dataTransfer = new DataTransfer();
     files.forEach(file => dataTransfer.items.add(file));
     fileInput.files = dataTransfer.files;
-    
+
+    // Update the stored files array
+    window.uploadedFiles = files;
+
     // Update the display
     displaySelectedFiles();
   }
@@ -1159,8 +1162,37 @@ function validateFilesBeforeSubmit() {
   return { valid: true, message: '' };
 }
 
-// Add event listener for file selection
+// Add event listener for file selection with appending functionality
 document.getElementById('fileAttachment').addEventListener('change', function(e) {
+  const fileInput = e.target;
+  const newFiles = Array.from(fileInput.files);
+
+  // Get existing files from the hidden storage
+  const existingFiles = window.uploadedFiles || [];
+
+  // Combine existing and new files
+  const allFiles = [...existingFiles, ...newFiles];
+
+  // Validate total file count
+  if (allFiles.length > MAX_FILE_COUNT) {
+    showFileValidationError(`Cannot add files. Maximum ${MAX_FILE_COUNT} files allowed. You currently have ${existingFiles.length} file(s) and tried to add ${newFiles.length} more.`);
+
+    // Reset file input without changing existing files
+    const dataTransfer = new DataTransfer();
+    existingFiles.forEach(file => dataTransfer.items.add(file));
+    fileInput.files = dataTransfer.files;
+    displaySelectedFiles();
+    return;
+  }
+
+  // Create a new DataTransfer to update the file input with all files
+  const dataTransfer = new DataTransfer();
+  allFiles.forEach(file => dataTransfer.items.add(file));
+  fileInput.files = dataTransfer.files;
+
+  // Store the combined files for future appends
+  window.uploadedFiles = allFiles;
+
   displaySelectedFiles();
 });
 
@@ -1225,38 +1257,42 @@ uploadBox.addEventListener('drop', (e) => {
   e.preventDefault();
   uploadBox.style.borderColor = '#c7d6ff';
   uploadBox.style.background = '#f3f6fb';
-  
+
   const files = e.dataTransfer.files;
   const fileInput = document.getElementById('fileAttachment');
-  
+
   // Validate before adding
   const validation = validateFiles(files);
-  
+
   // Create a new DataTransfer to handle multiple selections
   const dataTransfer = new DataTransfer();
-  
+
   // Add existing files
-  Array.from(fileInput.files).forEach(file => dataTransfer.items.add(file));
-  
+  const existingFiles = window.uploadedFiles || [];
+  existingFiles.forEach(file => dataTransfer.items.add(file));
+
   // Check if adding new files would exceed limit
   const totalFilesAfterAdd = dataTransfer.files.length + validation.validFiles.length;
   if (totalFilesAfterAdd > MAX_FILE_COUNT) {
     showFileValidationError(`Cannot add files. Maximum ${MAX_FILE_COUNT} files allowed. You would have ${totalFilesAfterAdd} files.`);
     return;
   }
-  
+
   // Add valid files
   validation.validFiles.forEach(file => dataTransfer.items.add(file));
-  
+
   // Show errors for oversized files
   if (validation.oversizedFiles.length > 0) {
     showFileValidationError(`${validation.oversizedFiles.length} file(s) exceed 5MB limit and were not added.`);
   }
-  
+
   fileInput.files = dataTransfer.files;
-  
-  // Trigger change event
-  fileInput.dispatchEvent(new Event('change'));
+
+  // Update stored files array
+  window.uploadedFiles = Array.from(dataTransfer.files);
+
+  // Trigger display update directly (no need to trigger change event which would duplicate the append logic)
+  displaySelectedFiles();
 });
 
     
