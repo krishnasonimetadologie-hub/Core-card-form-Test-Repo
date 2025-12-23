@@ -217,46 +217,60 @@
     }
 
     .modal-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .modal-icon.success {
-      color: #28a745;
+      background: #22A447;
     }
 
     .modal-icon.error {
-      color: #dc3545;
+      background: transparent;
+    }
+
+    .modal-icon svg {
+      width: 50px;
+      height: 50px;
     }
 
     .modal-title {
-      font-size: clamp(18px, 4vw, 22px);
+      font-size: clamp(16px, 3.5vw, 18px);
       font-weight: 600;
       color: #0a2a43;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
+    }
+
+    .modal-title.error {
+      color: #2F5FA7;
     }
 
     .modal-message {
-      font-size: clamp(13px, 3vw, 15px);
-      color: #333;
+      font-size: clamp(13px, 3vw, 14px);
+      color: #666;
       line-height: 1.5;
       margin-bottom: 24px;
     }
 
     .modal-btn {
-      background: #2f5fa7;
-      color: #ffffff;
-      padding: 10px 32px;
+      background: #E8F0FE;
+      color: #2F5FA7;
+      padding: 10px 40px;
       border-radius: 6px;
       border: none;
-      font-size: clamp(13px, 3vw, 15px);
+      font-size: clamp(13px, 3vw, 14px);
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
     }
 
     .modal-btn:hover {
-      background: #264a85;
+      background: #D4E4FC;
     }
 
     .help-text {
@@ -266,7 +280,7 @@
       margin-top: 4px;
     }
 
-    /* Loading Modal Styles */
+    /* Loading Modal Styles - New Progress Stepper Design */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -286,56 +300,82 @@
 
     .loading-content {
       background: #ffffff;
-      border-radius: 12px;
-      padding: 32px 36px;
-      max-width: 400px;
+      border-radius: 16px;
+      padding: 40px 50px;
+      max-width: 600px;
       width: 90%;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Progress Stepper Styles */
+    .progress-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #3B5A8F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .step-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .step-icon.inactive {
+      background: #C5C5C5;
+    }
+
+    .step-label {
+      font-size: clamp(13px, 3vw, 15px);
+      color: #3B5A8F;
+      font-weight: 500;
       text-align: center;
     }
 
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      margin: 0 auto 20px;
-      border: 4px solid #e3f2fd;
-      border-top: 4px solid #2f5fa7;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    .step-label.inactive {
+      color: #C5C5C5;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .progress-line-container {
+      position: absolute;
+      top: 24px;
+      left: 15%;
+      right: 15%;
+      height: 3px;
+      background: #E0E0E0;
+      z-index: 1;
     }
 
-    .loading-text {
-      font-size: clamp(14px, 3.2vw, 16px);
-      font-weight: 600;
-      color: #0a2a43;
-      margin-bottom: 20px;
-    }
-
-    .progress-container {
-      width: 100%;
-      height: 8px;
-      background: #e3f2fd;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
-
-    .progress-bar {
+    .progress-line {
       height: 100%;
-      background: linear-gradient(90deg, #2f5fa7, #4a7bc8);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-      box-shadow: 0 0 10px rgba(47, 95, 167, 0.5);
+      background: #3B5A8F;
+      width: 0%;
+      transition: width 1s ease;
     }
 
-    .progress-label {
-      font-size: clamp(11px, 2.6vw, 13px);
-      color: #666;
+    .progress-line.active {
+      width: 100%;
     }
 
     /* ===== ATTACHMENT UPLOAD (DESIGN ONLY) ===== */
@@ -803,23 +843,23 @@
 
         <!-- AIRCRAFT DETAILS -->
         <div class="row">
-          <label>Aircraft Type *</label>
+          <label>Aircraft Type <span style="color:red">*</span></label>
           <input name="aircraftType" type="text" />
         </div>
 
         <div class="row">
-          <label>Aircraft Serial Number *</label>
+          <label>Aircraft Serial Number <span style="color:red">*</span></label>
           <input name="aircraftSerial" type="text" />
         </div>
 
         <div class="row">
-          <label>Aircraft Tail Number *</label>
+          <label>Aircraft Tail Number <span style="color:red">*</span></label>
           <input name="aircraftTail" type="text" />
         </div>
 
         <!-- REASON FOR REMOVAL -->
         <div class="row">
-          <label>Reason For Removal *</label>
+          <label>Reason For Removal <span style="color:red">*</span></label>
           <textarea name="reasonForRemoval"></textarea>
         </div>
 
@@ -891,12 +931,29 @@
   <!-- Loading Modal -->
   <div id="loadingModal" class="loading-overlay">
     <div class="loading-content">
-      <div class="loading-spinner"></div>
-      <div id="loadingText" class="loading-text">Processing...</div>
-      <div class="progress-container">
-        <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+      <div class="progress-stepper">
+        <div class="step" id="step1">
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="white"/>
+            </svg>
+          </div>
+          <div class="step-label">Verifying Sales Order</div>
+        </div>
+
+        <div class="progress-line-container">
+          <div class="progress-line" id="progressLine"></div>
+        </div>
+
+        <div class="step" id="step2">
+          <div class="step-icon inactive">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="white"/>
+            </svg>
+          </div>
+          <div class="step-label inactive">Preparing Submission</div>
+        </div>
       </div>
-      <div id="progressLabel" class="progress-label">0%</div>
     </div>
   </div>
 
@@ -1359,11 +1416,30 @@ uploadBox.addEventListener('drop', (e) => {
       const modalMessage = document.getElementById('modalMessage');
 
       if (type === 'success') {
-        modalIcon.innerHTML = '✓';
+        modalIcon.innerHTML = `
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="white"/>
+          </svg>
+        `;
         modalIcon.className = 'modal-icon success';
+        modalTitle.className = 'modal-title';
+      } else if (type === 'error' && title === 'Sales Order Not Found') {
+        // Special error icon for Sales Order Not Found
+        modalIcon.innerHTML = `
+          <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25 20h30v35H25V20zm5 5v25h20V25H30z" fill="#E53935"/>
+            <path d="M35 30h10v3H35v-3zm0 6h10v3H35v-3z" fill="#E53935"/>
+            <circle cx="50" cy="25" r="8" fill="#E53935"/>
+            <path d="M47 22l6 6m0-6l-6 6" stroke="white" stroke-width="2"/>
+            <rect x="30" y="55" width="20" height="8" rx="2" fill="#E53935"/>
+          </svg>
+        `;
+        modalIcon.className = 'modal-icon error';
+        modalTitle.className = 'modal-title error';
       } else {
         modalIcon.innerHTML = '✕';
         modalIcon.className = 'modal-icon error';
+        modalTitle.className = 'modal-title';
       }
 
       modalTitle.textContent = title;
@@ -1384,31 +1460,46 @@ uploadBox.addEventListener('drop', (e) => {
     }
 
     // Loading Modal Functions
-    function showLoading(text, progress) {
+    function showLoading(step) {
       const loadingModal = document.getElementById('loadingModal');
-      const loadingText = document.getElementById('loadingText');
-      const progressBar = document.getElementById('progressBar');
-      const progressLabel = document.getElementById('progressLabel');
+      const progressLine = document.getElementById('progressLine');
+      const step2Icon = document.querySelector('#step2 .step-icon');
+      const step2Label = document.querySelector('#step2 .step-label');
 
-      loadingText.textContent = text;
-      progressBar.style.width = progress + '%';
-      progressLabel.textContent = progress + '%';
       loadingModal.className = 'loading-overlay show';
+
+      // Step 1: Verifying Sales Order
+      if (step === 1) {
+        progressLine.classList.remove('active');
+        step2Icon.classList.add('inactive');
+        step2Label.classList.add('inactive');
+      }
+      // Step 2: Preparing Submission
+      else if (step === 2) {
+        progressLine.classList.add('active');
+        setTimeout(() => {
+          step2Icon.classList.remove('inactive');
+          step2Label.classList.remove('inactive');
+        }, 500);
+      }
     }
 
-    function updateLoading(text, progress) {
-      const loadingText = document.getElementById('loadingText');
-      const progressBar = document.getElementById('progressBar');
-      const progressLabel = document.getElementById('progressLabel');
-
-      loadingText.textContent = text;
-      progressBar.style.width = progress + '%';
-      progressLabel.textContent = progress + '%';
+    function updateLoading(step) {
+      showLoading(step);
     }
 
     function hideLoading() {
       const loadingModal = document.getElementById('loadingModal');
       loadingModal.className = 'loading-overlay';
+
+      // Reset progress
+      const progressLine = document.getElementById('progressLine');
+      const step2Icon = document.querySelector('#step2 .step-icon');
+      const step2Label = document.querySelector('#step2 .step-label');
+
+      progressLine.classList.remove('active');
+      step2Icon.classList.add('inactive');
+      step2Label.classList.add('inactive');
     }
 
     async function getAccessToken() {
@@ -1677,9 +1768,25 @@ uploadBox.addEventListener('drop', (e) => {
       const submitBtn = document.querySelector(".submit-btn");
       const fileInput = document.getElementById("fileAttachment");
 
-      if (!subject.value.trim()) {
-        showModal('error', 'Required Field', 'Please enter the Sales Order Number.');
-        return;
+      // Validate all required fields
+      const requiredFields = [
+        { name: 'subject', label: 'CRS SO-#', element: subject },
+        { name: 'customerPo', label: 'Customer PO-#', element: form.querySelector('[name="customerPo"]') },
+        { name: 'customerName', label: 'Name', element: form.querySelector('[name="customerName"]') },
+        { name: 'company', label: 'Company Name', element: form.querySelector('[name="company"]') },
+        { name: 'partNumber', label: 'Part Number', element: form.querySelector('[name="partNumber"]') },
+        { name: 'serialNumber', label: 'Serial Number', element: form.querySelector('[name="serialNumber"]') },
+        { name: 'aircraftType', label: 'Aircraft Type', element: form.querySelector('[name="aircraftType"]') },
+        { name: 'aircraftSerial', label: 'Aircraft Serial Number', element: form.querySelector('[name="aircraftSerial"]') },
+        { name: 'aircraftTail', label: 'Aircraft Tail Number', element: form.querySelector('[name="aircraftTail"]') },
+        { name: 'reasonForRemoval', label: 'Reason For Removal', element: form.querySelector('[name="reasonForRemoval"]') }
+      ];
+
+      for (const field of requiredFields) {
+        if (!field.element.value.trim()) {
+          showModal('error', 'Required Field', `Please enter ${field.label}.`);
+          return;
+        }
       }
 
       const salesOrderNumber = extractSalesOrderNumber(subject.value);
@@ -1696,22 +1803,21 @@ uploadBox.addEventListener('drop', (e) => {
       }
 
       submitBtn.disabled = true;
-      showLoading('Authenticating...', 0);
+      showLoading(1); // Step 1: Verifying Sales Order
 
       try {
         const accessToken = await getAccessToken();
-        updateLoading('Verifying Sales Order...', 20);
 
         const verificationResult = await verifySalesOrder(salesOrderNumber, accessToken);
 
         if (!verificationResult.salesOrderExists) {
           hideLoading();
-          showModal('error', 'Sales Order Not Found', 'Mentioned Sales Order number does not exist with Us');
+          showModal('error', 'Sales Order Not Found', 'Sales Order number entered does not match as records.');
           submitBtn.disabled = false;
           return;
         }
 
-        updateLoading('Sales Order Verified', 40);
+        updateLoading(2); // Step 2: Preparing Submission
 
         // Prepare form data
         const formData = {
@@ -1732,20 +1838,14 @@ uploadBox.addEventListener('drop', (e) => {
           customerPo: form.querySelector('[name="customerPo"]').value
         };
 
-        updateLoading('Preparing Submission...', 50);
         const recordTypeId = await getRecordTypeId(accessToken);
         formData.recordTypeId = recordTypeId;
 
         if (fileInput.files.length > 0) {
-          updateLoading('Reading Files...', 60);
-
           const totalFiles = fileInput.files.length;
           const fileDataArray = [];
 
           for (let i = 0; i < totalFiles; i++) {
-            const fileProgress = 60 + (30 * ((i + 1) / totalFiles));
-            updateLoading(`Reading Files... (${i + 1}/${totalFiles})`, Math.round(fileProgress));
-
             // Read file as base64
             const file = fileInput.files[i];
             const fileData = await new Promise((resolve, reject) => {
@@ -1767,11 +1867,8 @@ uploadBox.addEventListener('drop', (e) => {
             fileDataArray.push(fileData);
           }
 
-          updateLoading('Files Ready', 90);
-          updateLoading('Creating Case in Salesforce...', 92);
           const caseId = await createCase(formData, accessToken);
 
-          updateLoading('Uploading Files...', 94);
           for (let i = 0; i < fileDataArray.length; i++) {
             const contentVersionData = {
               Title: fileDataArray[i].name,
@@ -1793,16 +1890,12 @@ uploadBox.addEventListener('drop', (e) => {
               throw new Error('Failed to upload file: ' + fileDataArray[i].name);
             }
           }
-
-          updateLoading('Submission Complete', 100);
         } else {
-          updateLoading('Creating Case in Salesforce...', 95);
           const caseId = await createCase(formData, accessToken);
-          updateLoading('Submission Complete', 100);
         }
 
         hideLoading();
-        showModal('success', 'Thank You!', 'Your form has been submitted successfully.', function() {
+        showModal('success', 'Form successfully submitted.', '', function() {
           window.location.href = "https://crsjetspares.com";
         });
 
