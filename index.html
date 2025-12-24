@@ -1516,6 +1516,7 @@ uploadBox.addEventListener('drop', (e) => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Case creation error:', errorData);
+        
         throw new Error('Failed to create case');
       }
 
@@ -1683,7 +1684,7 @@ uploadBox.addEventListener('drop', (e) => {
 
         if (!verificationResult.salesOrderExists) {
           hideLoading();
-          showModal('crs-not-found', 'CRS Order Not found', 'Sales Order number entered does not match as records.');
+          showModal('crs-not-found', 'CRS Order Not found', 'Sales Order number entered does not match as records');
           submitBtn.disabled = false;
           return;
         }
