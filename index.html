@@ -1510,7 +1510,7 @@ uploadBox.addEventListener('drop', (e) => {
         SuppliedCompany: formData.company,
         Type: 'Materials',
         Origin: 'Web',
-        RecordTypeId: '012O8000007XqVHIA0',
+        RecordTypeId: formData.recordTypeId,
         Customer_Name__c: formData.customerName,
         Part_Number__c: formData.partNumber,
         Serial_Number__c: formData.serialNumber,
@@ -1756,7 +1756,7 @@ uploadBox.addEventListener('drop', (e) => {
         const formData = {
           subject: caseSubject,
           company: form.querySelector('[name="company"]').value,
-          recordTypeId: null,
+          recordTypeId: await getRecordTypeId(accessToken),
           customerName: form.querySelector('[name="customerName"]').value,
           partNumber: form.querySelector('[name="partNumber"]').value,
           serialNumber: form.querySelector('[name="serialNumber"]').value,
@@ -1771,9 +1771,9 @@ uploadBox.addEventListener('drop', (e) => {
           customerPo: customerPoNumber
         };
 
-        updateLoading('Preparing Submission...', 'preparing');
-        const recordTypeId = await getRecordTypeId(accessToken);
-        formData.recordTypeId = recordTypeId;
+        // updateLoading('Preparing Submission...', 'preparing');
+        // const recordTypeId = await getRecordTypeId(accessToken);
+        // formData.recordTypeId = recordTypeId;
 
         if (fileInput.files.length > 0) {
           updateLoading('Reading Files...', 'preparing');
