@@ -1576,10 +1576,11 @@ uploadBox.addEventListener('drop', (e) => {
     }
 
     async function getRecordTypeId(accessToken) {
-      const query = "SELECT Id FROM RecordType WHERE SobjectType='Case' AND DeveloperName='Sales' LIMIT 1";
+      const query = "SELECT Id FROM RecordType WHERE SobjectType='Case' AND DeveloperName='Materials' LIMIT 1";
       const url = SF_INSTANCE + '/services/data/v62.0/query?q=' + encodeURIComponent(query);
 
       const response = await fetch(url, {
+        
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + accessToken,
